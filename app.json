@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Football App",
+    "slug": "football-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#4CAF50",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.company.footballapp",
+      "newArchEnabled": true
+    },
+    "android": {
+      "package": "com.company.footballapp",
+      "backgroundColor": "#4CAF50",
+      "newArchEnabled": true
+    },
+    "web": {
+      "bundler": "metro"
+    }
+    // If you need expo-build-properties, add it back with a valid version in package.json and here as a plugin.
+    // "plugins": [
+    //   [
+    //     "expo-build-properties",
+    //     {
+    //       "ios": {
+    //         "newArchEnabled": false
+    //       },
+    //       "android": {
+    //         "newArchEnabled": false
+    //       }
+    //     }
+    //   ]
+    // ]
+  }
+}
