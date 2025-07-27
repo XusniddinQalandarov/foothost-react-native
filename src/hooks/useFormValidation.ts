@@ -32,7 +32,7 @@ export const useFormValidation = (initialConfig: FormConfig) => {
 
   const validateField = useCallback(
     (fieldName: string, value: string): string => {
-      const rules = initialConfig[fieldName]?.rules;
+      const rules = initialConfig[fieldName]?.rules;  
       if (!rules) return '';
 
       if (rules.required && !value.trim()) {

@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, Image, TouchableOpacity } from 'react-native';
-import { colors, typography, spacing } from '../styles';
+import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../types/navigation';
+
+type BookingStep1ScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'BookingStep1'
+>;
+
+interface Props {
+  navigation: BookingStep1ScreenNavigationProp;
+}
 
 const mockStadium = {
   name: 'BUNYODKOR',
@@ -28,218 +38,112 @@ const mockSchedule = [
   { time: '07:00 AM - 09:00 AM', available: false },
 ];
 
-export const BookingStep1Screen: React.FC = () => {
+export const BookingStep1Screen: React.FC<Props> = ({ navigation }) => {
   const [selectedDate, setSelectedDate] = useState('today');
 
+  const handleSubmit = () => {
+    navigation.navigate('BookingStep2');
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-background-default">
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Image source={mockStadium.image} style={styles.stadiumImage} />
-        <View style={styles.headerRow}>
-          <Text style={styles.stadiumName}>{mockStadium.name}</Text>
-          <Text style={styles.stadiumRating}>{mockStadium.rating}</Text>
+        <Image source={mockStadium.image} className="w-full h-44" />
+        <View className="flex-row items-center justify-between m-4">
+          <Text className="text-lg font-bold text-text-primary">{mockStadium.name}</Text>
+          <Text className="bg-success text-white rounded-lg px-2 text-sm font-bold">{mockStadium.rating}</Text>
         </View>
-        <Text style={styles.stadiumAddress}>{mockStadium.address}</Text>
-        <Text style={styles.stadiumDistance}>{mockStadium.distance}</Text>
-        <View style={styles.infoRow}>
-          <View style={styles.infoBox}><Text style={styles.infoLabel}>Покрытие</Text><Text style={styles.infoValue}>{mockStadium.cover}</Text></View>
-          <View style={styles.infoBox}><Text style={styles.infoLabel}>Тип площадки</Text><Text style={styles.infoValue}>{mockStadium.type}</Text></View>
+        <Text className="text-sm text-text-secondary mx-4">{mockStadium.address}</Text>
+        <Text className="text-sm text-text-secondary mx-4 mb-4">{mockStadium.distance}</Text>
+        <View className="flex-row justify-between mx-4 mb-4">
+          <View className="flex-1 bg-white rounded-lg p-2 mx-1 items-center">
+            <Text className="text-xs text-text-secondary">Покрытие</Text>
+            <Text className="text-base font-bold text-text-primary">{mockStadium.cover}</Text>
+          </View>
+          <View className="flex-1 bg-white rounded-lg p-2 mx-1 items-center">
+            <Text className="text-xs text-text-secondary">Тип площадки</Text>
+            <Text className="text-base font-bold text-text-primary">{mockStadium.type}</Text>
+          </View>
         </View>
-        <View style={styles.infoRow}>
-          <View style={styles.infoBox}><Text style={styles.infoLabel}>Длина x Ширина (м)</Text><Text style={styles.infoValue}>{mockStadium.size}</Text></View>
-          <View style={styles.infoBox}><Text style={styles.infoLabel}>Время работы</Text><Text style={styles.infoValue}>{mockStadium.workTime}</Text></View>
+        <View className="flex-row justify-between mx-4 mb-4">
+          <View className="flex-1 bg-white rounded-lg p-2 mx-1 items-center">
+            <Text className="text-xs text-text-secondary">Длина x Ширина (м)</Text>
+            <Text className="text-base font-bold text-text-primary">{mockStadium.size}</Text>
+          </View>
+          <View className="flex-1 bg-white rounded-lg p-2 mx-1 items-center">
+            <Text className="text-xs text-text-secondary">Время работы</Text>
+            <Text className="text-base font-bold text-text-primary">{mockStadium.workTime}</Text>
+          </View>
         </View>
-        <Text style={styles.sectionTitle}>РАСПИСАНИЕ:</Text>
-        <View style={styles.scheduleRow}>
-          <TouchableOpacity style={[styles.dateButton, selectedDate === 'today' && styles.dateButtonActive]} onPress={() => setSelectedDate('today')}><Text style={[styles.dateButtonText, selectedDate === 'today' && styles.dateButtonTextActive]}>Сегодня</Text></TouchableOpacity>
-          <TouchableOpacity style={[styles.dateButton, selectedDate === 'tomorrow' && styles.dateButtonActive]} onPress={() => setSelectedDate('tomorrow')}><Text style={[styles.dateButtonText, selectedDate === 'tomorrow' && styles.dateButtonTextActive]}>Завтра</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.dateButton}><Text style={styles.dateButtonText}>11.06</Text></TouchableOpacity>
+        <Text className="text-lg font-bold text-text-primary mx-4 mt-6 mb-2">РАСПИСАНИЕ:</Text>
+        <View className="flex-row justify-around mb-4">
+          <TouchableOpacity 
+            className={`flex-1 bg-white border border-primary rounded-lg p-2 mx-1 items-center ${
+              selectedDate === 'today' ? 'bg-primary' : ''
+            }`}
+            onPress={() => setSelectedDate('today')}
+          >
+            <Text className={`text-base ${selectedDate === 'today' ? 'text-white' : 'text-primary'}`}>Сегодня</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            className={`flex-1 bg-white border border-primary rounded-lg p-2 mx-1 items-center ${
+              selectedDate === 'tomorrow' ? 'bg-primary' : ''
+            }`}
+            onPress={() => setSelectedDate('tomorrow')}
+          >
+            <Text className={`text-base ${selectedDate === 'tomorrow' ? 'text-white' : 'text-primary'}`}>Завтра</Text>
+          </TouchableOpacity>
+          <TouchableOpacity className="flex-1 bg-white border border-primary rounded-lg p-2 mx-1 items-center">
+            <Text className="text-base text-primary">11.06</Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.scheduleList}>
+        <View className="mx-4 mb-4">
           {mockSchedule.map((slot, idx) => (
-            <View key={idx} style={[styles.scheduleSlot, slot.available && styles.scheduleSlotAvailable]}>
-              <Text style={[styles.scheduleSlotText, slot.available && styles.scheduleSlotTextAvailable]}>{slot.time}</Text>
-              <Text style={styles.scheduleSlotStatus}>{slot.available ? 'Свободно' : 'Мест Нет'}</Text>
+            <View key={idx} className={`rounded-lg p-3 mb-2 ${
+              slot.available ? 'bg-success' : 'bg-gray-200'
+            }`}>
+              <Text className={`text-base ${slot.available ? 'text-white font-bold' : 'text-text-primary'}`}>
+                {slot.time}
+              </Text>
+              <Text className="text-sm text-text-secondary">
+                {slot.available ? 'Свободно' : 'Мест Нет'}
+              </Text>
             </View>
           ))}
         </View>
-        <Text style={styles.sectionTitle}>УДОБСТВО</Text>
-        <View style={styles.amenitiesRow}>
-          <Text style={[styles.amenity, !mockStadium.amenities.parking && styles.amenityUnavailable]}>Парковка {mockStadium.amenities.parking ? 'Есть' : 'Нет'}</Text>
-          <Text style={styles.amenity}>Раздевалки {mockStadium.amenities.locker ? 'Есть' : 'Нет'}</Text>
-          <Text style={styles.amenity}>Душ {mockStadium.amenities.shower ? 'Есть' : 'Нет'}</Text>
+        <Text className="text-lg font-bold text-text-primary mx-4 mt-6 mb-2">УДОБСТВО</Text>
+        <View className="flex-row flex-wrap mx-4 mb-2">
+          <Text className={`text-sm mr-4 mb-2 ${!mockStadium.amenities.parking ? 'text-gray-400' : 'text-text-primary'}`}>
+            Парковка {mockStadium.amenities.parking ? 'Есть' : 'Нет'}
+          </Text>
+          <Text className="text-sm mr-4 mb-2 text-text-primary">
+            Раздевалки {mockStadium.amenities.locker ? 'Есть' : 'Нет'}
+          </Text>
+          <Text className="text-sm mr-4 mb-2 text-text-primary">
+            Душ {mockStadium.amenities.shower ? 'Есть' : 'Нет'}
+          </Text>
         </View>
-        <View style={styles.amenitiesRow}>
-          <Text style={styles.amenity}>Трибуны {mockStadium.amenities.tribune ? 'Есть' : 'Нет'}</Text>
-          <Text style={styles.amenity}>Освещение {mockStadium.amenities.lighting ? 'Есть' : 'Нет'}</Text>
+        <View className="flex-row flex-wrap mx-4 mb-4">
+          <Text className="text-sm mr-4 mb-2 text-text-primary">
+            Трибуны {mockStadium.amenities.tribune ? 'Есть' : 'Нет'}
+          </Text>
+          <Text className="text-sm mr-4 mb-2 text-text-primary">
+            Освещение {mockStadium.amenities.lighting ? 'Есть' : 'Нет'}
+          </Text>
         </View>
-        <View style={styles.mapBox}>
-          <Text style={styles.sectionTitle}>МЕСТОПОЛОЖЕНИЕ:</Text>
-          <View style={styles.mapPlaceholder}><Text>Map Placeholder</Text></View>
+        <View className="mx-4 mb-6">
+          <Text className="text-lg font-bold text-text-primary mb-2">МЕСТОПОЛОЖЕНИЕ:</Text>
+          <View className="bg-gray-200 rounded-lg p-4 items-center">
+            <Text>Map Placeholder</Text>
+          </View>
         </View>
-        <TouchableOpacity style={styles.submitButton}><Text style={styles.submitButtonText}>Отправить заявку</Text></TouchableOpacity>
+        <TouchableOpacity 
+          className="bg-primary rounded-lg mx-4 mb-6 py-4 items-center"
+          onPress={handleSubmit}
+        >
+          <Text className="text-white text-lg font-bold">Отправить заявку</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background.default,
-  },
-  stadiumImage: {
-    width: '100%',
-    height: 180,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    margin: spacing.md,
-  },
-  stadiumName: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
-  },
-  stadiumRating: {
-    backgroundColor: colors.success,
-    color: colors.white,
-    borderRadius: 8,
-    paddingHorizontal: spacing.xs,
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.bold,
-  },
-  stadiumAddress: {
-    fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
-    marginHorizontal: spacing.md,
-  },
-  stadiumDistance: {
-    fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
-    marginHorizontal: spacing.md,
-    marginBottom: spacing.sm,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: spacing.md,
-    marginBottom: spacing.sm,
-  },
-  infoBox: {
-    flex: 1,
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    padding: spacing.sm,
-    marginHorizontal: 2,
-    alignItems: 'center',
-  },
-  infoLabel: {
-    fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
-  },
-  infoValue: {
-    fontSize: typography.fontSize.base,
-    color: colors.text.primary,
-    fontWeight: typography.fontWeight.bold,
-  },
-  sectionTitle: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
-    marginHorizontal: spacing.md,
-    marginTop: spacing.lg,
-    marginBottom: spacing.sm,
-  },
-  scheduleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: spacing.sm,
-  },
-  dateButton: {
-    flex: 1,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    borderRadius: 8,
-    padding: spacing.sm,
-    marginHorizontal: 2,
-    alignItems: 'center',
-  },
-  dateButtonActive: {
-    backgroundColor: colors.primary,
-  },
-  dateButtonText: {
-    color: colors.primary,
-    fontSize: typography.fontSize.base,
-  },
-  dateButtonTextActive: {
-    color: colors.white,
-  },
-  scheduleList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginHorizontal: spacing.md,
-    marginBottom: spacing.md,
-  },
-  scheduleSlot: {
-    width: '48%',
-    backgroundColor: colors.gray[200],
-    borderRadius: 8,
-    padding: spacing.sm,
-    margin: '1%',
-    alignItems: 'center',
-  },
-  scheduleSlotAvailable: {
-    backgroundColor: colors.success,
-  },
-  scheduleSlotText: {
-    color: colors.text.primary,
-    fontSize: typography.fontSize.sm,
-  },
-  scheduleSlotTextAvailable: {
-    color: colors.white,
-    fontWeight: typography.fontWeight.bold,
-  },
-  scheduleSlotStatus: {
-    fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
-    marginTop: 2,
-  },
-  amenitiesRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: spacing.sm,
-  },
-  amenity: {
-    fontSize: typography.fontSize.sm,
-    color: colors.text.primary,
-  },
-  amenityUnavailable: {
-    color: colors.error,
-  },
-  mapBox: {
-    margin: spacing.md,
-  },
-  mapPlaceholder: {
-    backgroundColor: colors.gray[200],
-    height: 120,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  submitButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-    margin: spacing.md,
-    alignItems: 'center',
-    padding: spacing.lg,
-  },
-  submitButtonText: {
-    color: colors.white,
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.bold,
-  },
-}); 
+}; 

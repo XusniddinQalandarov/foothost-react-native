@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
@@ -10,7 +9,6 @@ import {
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
 import { Button, Input, Checkbox } from '../components/common';
-import { colors, typography, spacing } from '../styles';
 
 type RegisterScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -25,94 +23,115 @@ export const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    email: '',
+    phoneNumber: '',
     password: '',
   });
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
+    if (!formData.firstName || !formData.lastName || !formData.phoneNumber || !formData.password) {
+      alert('Пожалуйста, заполните все поля');
+      return;
+    }
+
+    if (!agreeToTerms) {
+      alert('Пожалуйста, согласитесь с условиями');
+      return;
+    }
+
     setLoading(true);
+    
     // Simulate API call
     setTimeout(() => {
       setLoading(false);
-      // Handle registration logic here
-    }, 2000);
+      // Navigate to phone verification with the phone number
+      navigation.navigate('PhoneVerification', {
+        phoneNumber: formData.phoneNumber
+      });
+    }, 1000);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.logo}>
-          <Text style={styles.logoText}>FOOT</Text>
-          <Text style={styles.logoSubText}>BEST</Text>
+    <SafeAreaView className="flex-1 bg-primary">
+      <View className="px-6 pt-4 pb-6">
+        <View className="flex-row items-center">
+          <Text className="text-lg font-bold text-white">FOOT</Text>
+          <Text className="text-sm font-bold text-white ml-1">HOST</Text>
         </View>
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>СОЗДАЙТЕ СВОЙ ID</Text>
-        <Text style={styles.subtitle}>
+      <ScrollView className="flex-1 bg-white rounded-t-3xl px-6 pt-8" showsVerticalScrollIndicator={false}>
+        <Text className="text-2xl font-bold text-text-primary text-center mb-2">
+          СОЗДАЙТЕ СВОЙ ID
+        </Text>
+        <Text className="text-base text-text-secondary text-center mb-8">
           Зови друзей, выбирай время и выходи на матч!
         </Text>
 
-        <View style={styles.form}>
+        <View className="flex-1">
           <Input
-            placeholder="First Name"
+            placeholder="Имя"
             value={formData.firstName}
             onChangeText={(text) =>
               setFormData({ ...formData, firstName: text })
             }
             autoCapitalize="words"
+            className="mb-4"
           />
 
           <Input
-            placeholder="Last Name"
+            placeholder="Фамилия"
             value={formData.lastName}
             onChangeText={(text) =>
               setFormData({ ...formData, lastName: text })
             }
             autoCapitalize="words"
+            className="mb-4"
           />
 
           <Input
-            placeholder="Email"
-            value={formData.email}
+            placeholder="Номер телефона"
+            value={formData.phoneNumber}
             onChangeText={(text) =>
-              setFormData({ ...formData, email: text })
+              setFormData({ ...formData, phoneNumber: text })
             }
-            keyboardType="email-address"
-            autoCapitalize="none"
+            keyboardType="phone-pad"
+            className="mb-4"
           />
 
           <Input
-            placeholder="Password"
+            placeholder="Пароль"
             value={formData.password}
             onChangeText={(text) =>
               setFormData({ ...formData, password: text })
             }
             secureTextEntry
+            className="mb-4"
           />
 
-          <Text style={styles.passwordHint}>
+          <Text className="text-sm text-text-secondary mb-6 leading-5">
             Пароль должен быть длинной не менее 8 символов и использовать
             1 заглавную букву и 1 символ.
           </Text>
 
-          <Checkbox
-            checked={agreeToTerms}
-            onPress={() => setAgreeToTerms(!agreeToTerms)}
-            label="Я согласен с Условиями и Политикой конфиденциальности"
-          />
+          <View className="mb-6">
+            <Checkbox
+              checked={agreeToTerms}
+              onPress={() => setAgreeToTerms(!agreeToTerms)}
+              label="Я согласен с Условиями и Политикой конфиденциальности"
+            />
+          </View>
 
           <Button
             title="ЗАРЕГИСТРИРОВАТЬСЯ"
             onPress={handleRegister}
             disabled={!agreeToTerms}
             loading={loading}
-            style={styles.registerButton}
+            className="mb-4"
           />
 
-          <Text style={styles.agreementText}>
+          <Text className="text-sm text-text-secondary text-center leading-5 mb-8">
             Соглашаясь с вышеуказанными условиями, вы даете согласие на сбор,
             хранение и обработку ваших персональных данных
           </Text>
@@ -120,72 +139,4 @@ export const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       </ScrollView>
     </SafeAreaView>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.primary,
-  },
-  header: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
-  },
-  logo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  logoText: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.white,
-  },
-  logoSubText: {
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.white,
-    marginLeft: spacing.xs,
-  },
-  content: {
-    flex: 1,
-    backgroundColor: colors.white,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl,
-  },
-  title: {
-    fontSize: typography.fontSize['2xl'],
-    fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  subtitle: {
-    fontSize: typography.fontSize.base,
-    color: colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
-  },
-  form: {
-    flex: 1,
-  },
-  passwordHint: {
-    fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
-    marginBottom: spacing.lg,
-    lineHeight: typography.fontSize.sm * 1.4,
-  },
-  registerButton: {
-    marginTop: spacing.lg,
-    marginBottom: spacing.md,
-  },
-  agreementText: {
-    fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
-    textAlign: 'center',
-    lineHeight: typography.fontSize.sm * 1.4,
-    marginBottom: spacing.xl,
-  },
-}); 
+}; 

@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, Image, TouchableOpacity } from 'react-native';
-import { colors, typography, spacing } from '../styles';
+import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../types/navigation';
+
+type StadiumListScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'StadiumList'
+>;
+
+interface Props {
+  navigation: StadiumListScreenNavigationProp;
+  rootNavigation?: StackNavigationProp<RootStackParamList, 'Main'>;
+}
 
 const mockStadiums = [
   { id: 1, name: 'BUNYODKOR', address: 'Малая кольцевая дорога', distance: '4.9 км от вас', rating: 9.9, image: require('../../assets/images/homepage/homepage.png') },
@@ -14,152 +25,64 @@ const mockDates = [
   { label: '11.06', value: '11.06' },
 ];
 
-export const StadiumListScreen: React.FC = () => {
+export const StadiumListScreen: React.FC<Props> = ({ navigation, rootNavigation }) => {
   const [selectedDate, setSelectedDate] = useState('today');
 
+  const handleDetailPress = () => {
+    if (rootNavigation) {
+      rootNavigation.navigate('BookingStep1');
+    }
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.headerRow}>
-        <TouchableOpacity><Text style={styles.backText}>{'< Back'}</Text></TouchableOpacity>
-        <Text style={styles.title}>СПИСОК ПОЛЕЙ</Text>
-        <Text style={styles.count}>121 полей</Text>
+    <SafeAreaView className="flex-1 bg-background-default">
+      <View className="flex-row items-center p-4 justify-between">
+        <TouchableOpacity>
+          <Text className="text-primary text-base">{'< Back'}</Text>
+        </TouchableOpacity>
+        <Text className="text-lg font-bold text-text-primary">СПИСОК ПОЛЕЙ</Text>
+        <Text className="text-sm text-text-secondary">121 полей</Text>
       </View>
-      <View style={styles.dateRow}>
+      <View className="flex-row justify-around mb-4">
         {mockDates.map((date) => (
           <TouchableOpacity
             key={date.value}
-            style={[styles.dateButton, selectedDate === date.value && styles.dateButtonActive]}
+            className={`flex-1 bg-white border border-primary rounded-lg p-2 mx-1 items-center ${
+              selectedDate === date.value ? 'bg-primary' : ''
+            }`}
             onPress={() => setSelectedDate(date.value)}
           >
-            <Text style={[styles.dateButtonText, selectedDate === date.value && styles.dateButtonTextActive]}>{date.label}</Text>
+            <Text className={`text-base ${
+              selectedDate === date.value ? 'text-white' : 'text-primary'
+            }`}>
+              {date.label}
+            </Text>
           </TouchableOpacity>
         ))}
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         {mockStadiums.map((item) => (
-          <View key={item.id} style={styles.stadiumCard}>
-            <Image source={item.image} style={styles.stadiumImage} />
-            <View style={styles.stadiumInfo}>
-              <Text style={styles.stadiumName}>{item.name}</Text>
-              <Text style={styles.stadiumAddress}>{item.address}</Text>
-              <View style={styles.stadiumMetaRow}>
-                <Text style={styles.stadiumDistance}>{item.distance}</Text>
-                <View style={styles.ratingBox}><Text style={styles.stadiumRating}>{item.rating}</Text></View>
+          <View key={item.id} className="bg-white rounded-lg m-4 overflow-hidden shadow-sm">
+            <Image source={item.image} className="w-full h-40" />
+            <View className="p-4">
+              <Text className="text-base font-bold text-text-primary mb-1">{item.name}</Text>
+              <Text className="text-sm text-text-secondary mb-1">{item.address}</Text>
+              <View className="flex-row items-center mb-2">
+                <Text className="text-sm text-text-secondary flex-1">{item.distance}</Text>
+                <View className="bg-success rounded-lg px-2 py-1">
+                  <Text className="text-white text-sm font-bold">{item.rating}</Text>
+                </View>
               </View>
-              <TouchableOpacity style={styles.detailButton}><Text style={styles.detailButtonText}>Подробнее</Text></TouchableOpacity>
+              <TouchableOpacity 
+                className="bg-primary rounded-lg py-2 items-center mt-2"
+                onPress={handleDetailPress}
+              >
+                <Text className="text-white text-base font-bold">Подробнее</Text>
+              </TouchableOpacity>
             </View>
           </View>
         ))}
       </ScrollView>
     </SafeAreaView>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background.default,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: spacing.md,
-    justifyContent: 'space-between',
-  },
-  backText: {
-    color: colors.primary,
-    fontSize: typography.fontSize.base,
-  },
-  title: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
-  },
-  count: {
-    fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
-  },
-  dateRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: spacing.md,
-  },
-  dateButton: {
-    flex: 1,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    borderRadius: 8,
-    padding: spacing.sm,
-    marginHorizontal: 2,
-    alignItems: 'center',
-  },
-  dateButtonActive: {
-    backgroundColor: colors.primary,
-  },
-  dateButtonText: {
-    color: colors.primary,
-    fontSize: typography.fontSize.base,
-  },
-  dateButtonTextActive: {
-    color: colors.white,
-  },
-  stadiumCard: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    margin: spacing.md,
-    overflow: 'hidden',
-    elevation: 2,
-  },
-  stadiumImage: {
-    width: '100%',
-    height: 160,
-  },
-  stadiumInfo: {
-    padding: spacing.md,
-  },
-  stadiumName: {
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
-    marginBottom: spacing.xs,
-  },
-  stadiumAddress: {
-    fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
-    marginBottom: spacing.xs,
-  },
-  stadiumMetaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  stadiumDistance: {
-    fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
-    flex: 1,
-  },
-  ratingBox: {
-    backgroundColor: colors.success,
-    borderRadius: 8,
-    paddingHorizontal: spacing.xs,
-    paddingVertical: 2,
-  },
-  stadiumRating: {
-    color: colors.white,
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.bold,
-  },
-  detailButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-    paddingVertical: spacing.sm,
-    alignItems: 'center',
-    marginTop: spacing.sm,
-  },
-  detailButtonText: {
-    color: colors.white,
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.bold,
-  },
-}); 
+}; 

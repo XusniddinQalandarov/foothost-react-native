@@ -3,76 +3,38 @@ import {
   TextInput,
   View,
   Text,
-  StyleSheet,
   TextInputProps,
-  ViewStyle,
 } from 'react-native';
-import { colors, typography, spacing } from '../../styles';
 
 interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
-  containerStyle?: ViewStyle;
+  className?: string;
 }
 
 export const Input: React.FC<InputProps> = ({
   label,
   error,
-  containerStyle,
+  className = '',
   style,
   ...props
 }) => {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <View style={[styles.container, containerStyle]}>
-      {label && <Text style={styles.label}>{label}</Text>}
+    <View className={`mb-4 ${className}`}>
+      {label && <Text className="text-sm font-medium text-text-primary mb-1">{label}</Text>}
       <TextInput
-        style={[
-          styles.input,
-          isFocused && styles.inputFocused,
-          error && styles.inputError,
-          style,
-        ]}
+        className={`h-14 border border-gray-300 rounded-lg px-4 text-base text-text-primary bg-white ${
+          isFocused ? 'border-primary' : ''
+        } ${error ? 'border-error' : ''}`}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        placeholderTextColor={colors.text.hint}
+        placeholderTextColor="#757575"
+        style={style}
         {...props}
       />
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <Text className="text-sm text-error mt-1">{error}</Text>}
     </View>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: spacing.md,
-  },
-  label: {
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.text.primary,
-    marginBottom: spacing.xs,
-  },
-  input: {
-    height: 56,
-    borderWidth: 1,
-    borderColor: colors.gray[300],
-    borderRadius: 8,
-    paddingHorizontal: spacing.md,
-    fontSize: typography.fontSize.base,
-    color: colors.text.primary,
-    backgroundColor: colors.white,
-  },
-  inputFocused: {
-    borderColor: colors.primary,
-  },
-  inputError: {
-    borderColor: colors.error,
-  },
-  errorText: {
-    fontSize: typography.fontSize.sm,
-    color: colors.error,
-    marginTop: spacing.xs,
-  },
-}); 
+}; 

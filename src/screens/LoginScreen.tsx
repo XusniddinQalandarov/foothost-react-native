@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
 import { Button, Input } from '../components/common';
-import { colors, typography, spacing } from '../styles';
 
 type LoginScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -22,44 +21,53 @@ interface Props {
 
 export const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: '',
   });
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
-    // --- PRODUCTION AUTH LOGIC (commented out for development) ---
-    // setLoading(true);
-    // // Simulate API call
-    // setTimeout(() => {
-    //   setLoading(false);
-    //   // Handle login logic here
-    // }, 2000);
-
-    // --- DEVELOPMENT: Navigate to Home directly ---
-    navigation.navigate('Home');
+    setLoading(true);
+    
+    // Mock authentication
+    setTimeout(() => {
+      setLoading(false);
+      
+      if (formData.username === 'user' && formData.password === 'user') {
+        // Successful login
+        navigation.navigate('Main');
+      } else {
+        // Failed login
+        Alert.alert(
+          'Login Failed',
+          'Invalid username or password. Please use username: "user" and password: "user"',
+          [{ text: 'OK' }]
+        );
+      }
+    }, 1000);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.logo}>
-          <Text style={styles.logoText}>FOOT</Text>
-          <Text style={styles.logoSubText}>BEST</Text>
+    <SafeAreaView className="flex-1 bg-primary">
+      <View className="px-6 pt-4 pb-6">
+        <View className="flex-row items-center">
+          <Text className="text-lg font-bold text-white">FOOT</Text>
+          <Text className="text-sm font-bold text-white ml-1">HOST</Text>
         </View>
       </View>
 
-      <View style={styles.content}>
-        <Text style={styles.title}>ВОЙДИТЕ, ИСПОЛЬЗУЯ ВАШ ЛОГИН И ПАРОЛЬ</Text>
+      <View className="flex-1 bg-white rounded-t-3xl px-6 pt-8">
+        <Text className="text-xl font-bold text-text-primary text-center mb-8 leading-relaxed">
+          ВОЙДИТЕ, ИСПОЛЬЗУЯ ВАШ ЛОГИН И ПАРОЛЬ
+        </Text>
 
-        <View style={styles.form}>
+        <View className="flex-1">
           <Input
-            placeholder="Email"
-            value={formData.email}
+            placeholder="Username"
+            value={formData.username}
             onChangeText={(text) =>
-              setFormData({ ...formData, email: text })
+              setFormData({ ...formData, username: text })
             }
-            keyboardType="email-address"
             autoCapitalize="none"
           />
 
@@ -72,112 +80,30 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
             secureTextEntry
           />
 
-          <TouchableOpacity style={styles.forgotPassword}>
-            <Text style={styles.forgotPasswordText}>Забыли пароль?</Text>
+          <TouchableOpacity className="self-end mb-8">
+            <Text className="text-sm text-text-secondary">Забыли пароль?</Text>
           </TouchableOpacity>
 
           <Button
             title="ВОЙТИ"
             onPress={handleLogin}
             loading={loading}
-            style={styles.loginButton}
           />
 
-          <View style={styles.orContainer}>
-            <View style={styles.orLine} />
-            <Text style={styles.orText}>OR</Text>
-            <View style={styles.orLine} />
+          <View className="flex-row items-center mb-6">
+            <View className="flex-1 h-px bg-gray-300" />
+            <Text className="text-sm text-text-secondary mx-4">OR</Text>
+            <View className="flex-1 h-px bg-gray-300" />
           </View>
 
           <TouchableOpacity 
-            style={styles.registerLink}
+            className="items-center py-4"
             onPress={() => navigation.navigate('Register')}
           >
-            <Text style={styles.registerLinkText}>ЗАРЕГИСТРИРОВАТЬСЯ</Text>
+            <Text className="text-base font-semibold text-primary">ЗАРЕГИСТРИРОВАТЬСЯ</Text>
           </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.primary,
-  },
-  header: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
-  },
-  logo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  logoText: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.white,
-  },
-  logoSubText: {
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.white,
-    marginLeft: spacing.xs,
-  },
-  content: {
-    flex: 1,
-    backgroundColor: colors.white,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl,
-  },
-  title: {
-    fontSize: typography.fontSize.xl,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
-    lineHeight: typography.fontSize.xl * 1.3,
-  },
-  form: {
-    flex: 1,
-  },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: spacing.xl,
-  },
-  forgotPasswordText: {
-    fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
-  },
-  loginButton: {
-    marginBottom: spacing.lg,
-  },
-  orContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.lg,
-  },
-  orLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: colors.gray[300],
-  },
-  orText: {
-    fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
-    marginHorizontal: spacing.md,
-  },
-  registerLink: {
-    alignItems: 'center',
-    paddingVertical: spacing.md,
-  },
-  registerLinkText: {
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.primary,
-  },
-}); 
+}; 
