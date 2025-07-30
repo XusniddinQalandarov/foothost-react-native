@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,9 +6,22 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  TextInput,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import MaskedView from '@react-native-masked-view/masked-view';
+import { LinearGradient } from 'expo-linear-gradient';
+
+// Import reusable components
+import { 
+  SearchBar, 
+  FilterButton, 
+  SectionHeader, 
+  FieldCard, 
+  NewsCard, 
+  ClanCard,
+  Container,
+  Header
+} from '../components/common';
 
 // Import SVG files
 import News1Svg from '../../assets/images/homepage/news1.svg';
@@ -16,6 +29,8 @@ import News2Svg from '../../assets/images/homepage/news2.svg';
 import BestFieldSvg from '../../assets/images/homepage/bestfield.svg';
 import MockClansSvg from '../../assets/images/homepage/mockClans.svg';
 import ReadyMatchSvg from '../../assets/images/homepage/readyMatch.svg';
+import Logo from '../../assets/images/logo.svg';
+import Bell from '../../assets/images/homepage/bell.svg';
 
 const mockClans = [
   { id: 1, name: 'Paxtakor', wins: 37, losses: 8, score: 1886, rank: 1 },
@@ -24,90 +39,90 @@ const mockClans = [
 ];
 
 export const HomeScreen: React.FC = () => {
-  const getRankColor = (rank: number) => {
-    switch (rank) {
-      case 1: return '#FFD700'; // Gold
-      case 2: return '#C0C0C0'; // Silver
-      case 3: return '#CD7F32'; // Bronze
-      default: return '#757575';
-    }
-  };
+  const [searchValue, setSearchValue] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState<'location' | 'date' | 'time'>('location');
 
   return (
-    <SafeAreaView className="flex-1 bg-background-default">
+    <SafeAreaView className="flex-1 bg-white">
       {/* Top Bar */}
-      <View className="flex-row items-center justify-between px-6 py-4">
-        <View className="flex-row items-center">
-          <View className="w-8 h-8 bg-primary rounded-lg items-center justify-center mr-2">
-            <Text className="text-white font-bold text-sm">FH</Text>
-          </View>
-          <Text className="text-lg font-bold text-text-primary">FOOT HOST</Text>
-        </View>
-        <TouchableOpacity>
-          <MaterialCommunityIcons name="bell" size={24} color="#212121" />
-        </TouchableOpacity>
-      </View>
+      <Header
+        left={<Logo width={100} height={40} />}
+        right={<TouchableOpacity><Bell width={24} height={24} /></TouchableOpacity>}
+      >
+      </Header>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Search and Filter Section */}
-        <View className="px-6 mb-6">
-          <View className="flex-row items-center mb-4">
-            <TextInput
-              placeholder="Team, sport or venue"
-              className="flex-1 bg-white rounded-lg px-4 py-3 mr-2"
-              placeholderTextColor="#757575"
-            />
-            <TouchableOpacity className="w-12 h-12 bg-primary rounded-lg items-center justify-center">
-              <MaterialCommunityIcons name="magnify" size={20} color="white" />
-            </TouchableOpacity>
-          </View>
+        <Container padding="md">
+          <SearchBar 
+            value={searchValue}
+            onChangeText={setSearchValue}
+            onSearch={() => console.log('Search pressed')}
+          />
 
-          <View className="flex-row space-x-3">
-            <TouchableOpacity className="flex-1 bg-primary rounded-lg px-4 py-3 flex-row items-center justify-center">
-              <MaterialCommunityIcons name="map-marker" size={16} color="white" />
-              <Text className="text-white font-semibold ml-2">Ташкент</Text>
-            </TouchableOpacity>
-            <TouchableOpacity className="flex-1 bg-white border border-gray-300 rounded-lg px-4 py-3 flex-row items-center justify-center">
-              <MaterialCommunityIcons name="calendar" size={16} color="#757575" />
-              <Text className="text-text-secondary font-semibold ml-2">00/00/2026</Text>
-            </TouchableOpacity>
-            <TouchableOpacity className="flex-1 bg-white border border-gray-300 rounded-lg px-4 py-3 flex-row items-center justify-center">
-              <MaterialCommunityIcons name="clock-outline" size={16} color="#757575" />
-              <Text className="text-text-secondary font-semibold ml-2">00:00</Text>
-            </TouchableOpacity>
+          <View className="flex-row">
+            <FilterButton
+              icon="map-marker"
+              text="Ташкент"
+              isActive={selectedFilter === 'location'}
+              activeColor="#45AF31"
+              inactiveColor="#fff"
+              activeTextColor="#fff"
+              inactiveTextColor="#45AF31"
+              activeBorderColor="#45AF31"
+              inactiveBorderColor="#45AF31"
+              iconColor="#45AF31"
+              activeIconColor="#fff"
+              onPress={() => setSelectedFilter('location')}
+              className="mr-2"
+            />
+            <FilterButton
+              icon="calendar"
+              text="00/00/2026"
+              isActive={selectedFilter === 'date'}
+              activeColor="#45AF31"
+              inactiveColor="#fff"
+              activeTextColor="#fff"
+              inactiveTextColor="#45AF31"
+              activeBorderColor="#45AF31"
+              inactiveBorderColor="#45AF31"
+              iconColor="#45AF31"
+              activeIconColor="#fff"
+              onPress={() => setSelectedFilter('date')}
+              className="mr-2"
+            />
+            <FilterButton
+              icon="clock-outline"
+              text="00:00"
+              isActive={selectedFilter === 'time'}
+              activeColor="#45AF31"
+              inactiveColor="#fff"
+              activeTextColor="#fff"
+              inactiveTextColor="#45AF31"
+              activeBorderColor="#45AF31"
+              inactiveBorderColor="#45AF31"
+              iconColor="#45AF31"
+              activeIconColor="#fff"
+              onPress={() => setSelectedFilter('time')}
+            />
           </View>
-        </View>
+        </Container>
 
         {/* Popular Fields Section */}
-        <View className="px-6 mb-8">
-          <View className="flex-row items-center justify-between mb-4">
-            <Text className="text-lg font-bold text-text-primary">ПОПУЛЯРНЫЕ ПОЛЯ</Text>
-            <TouchableOpacity>
-              <Text className="text-primary font-semibold">View all {'>'}</Text>
-            </TouchableOpacity>
-          </View>
+        <Container padding="md">
+          <SectionHeader 
+            title="ПОПУЛЯРНЫЕ ПОЛЯ"
+            onViewAll={() => console.log('View all fields')}
+          />
 
-          <View className="relative">
-            <Image
-              source={require('../../assets/images/homepage/homepage.png')}
-              className="w-full h-48 rounded-lg"
-              resizeMode="cover"
-            />
-            <View className="absolute bottom-4 left-4">
-              <Text className="text-white font-bold text-lg mb-1">BUNYODKOR</Text>
-              <View className="flex-row items-center">
-                <MaterialCommunityIcons name="map-marker" size={16} color="white" />
-                <Text className="text-white text-sm ml-1">Малая кольцевая дорога</Text>
-              </View>
-            </View>
-            <View className="absolute bottom-4 right-4">
-              <View className="flex-row items-center mb-1">
-                <MaterialCommunityIcons name="star" size={16} color="#FFD700" />
-                <Text className="text-white font-bold ml-1">9.9</Text>
-              </View>
-              <Text className="text-white text-sm">4.9 км от вас</Text>
-            </View>
-          </View>
+          <FieldCard
+            name="BUNYODKOR"
+            location="Малая кольцевая дорога"
+            rating={9.9}
+            distance="4.9 км от вас"
+            image={require('../../assets/images/homepage/homepage.png')}
+            onPress={() => console.log('Field pressed')}
+          />
 
           {/* Pagination Dots */}
           <View className="flex-row justify-center mt-4 space-x-2">
@@ -117,48 +132,38 @@ export const HomeScreen: React.FC = () => {
             <View className="w-2 h-2 bg-gray-300 rounded-full" />
             <View className="w-2 h-2 bg-gray-300 rounded-full" />
           </View>
-        </View>
+        </Container>
 
         {/* News Section */}
-        <View className="px-6 mb-8">
-          <View className="flex-row items-center justify-between mb-4">
-            <Text className="text-lg font-bold text-text-primary">NEWS</Text>
-            <TouchableOpacity>
-              <Text className="text-primary font-semibold">View all {'>'}</Text>
-            </TouchableOpacity>
-          </View>
+        <Container padding="md" className="mb-2 w-full">
+          <SectionHeader 
+            title="NEWS"
+            onViewAll={() => console.log('View all news')}
+          />
 
           {/* Two smaller horizontal cards */}
-          <View className="flex-row space-x-4 mb-4">
-            <View className="flex-1">
-              <View className="w-full h-40 rounded-lg overflow-hidden relative">
-                <News1Svg width="100%" height="100%" />
-                <View className="absolute bottom-2 left-2 right-2">
-                  <Text className="text-white text-sm leading-4">
-                    Gamemag.ru - Состоялся релиз футбольного...
-                  </Text>
-                </View>
-              </View>
-            </View>
-            <View className="flex-1">
-              <View className="w-full h-40 rounded-lg overflow-hidden relative">
-                <News2Svg width="100%" height="100%" />
-                <View className="absolute bottom-2 left-2 right-2">
-                  <Text className="text-white text-sm leading-4">
-                    Yamal helps Barcelona seal La Liga title at rivals
-                  </Text>
-                </View>
-              </View>
-            </View>
+          <View className="flex-row space-x-8 mb-4">
+            <NewsCard
+              title="Gamemag.ru - Состоялся релиз футбольного..."
+              image={<News1Svg width="100%" height="100%" style={{ flex: 1 }} />}
+              onPress={() => console.log('News 1 pressed')}
+              className="flex-1"
+            />
+            <NewsCard
+              title="Yamal helps Barcelona seal La Liga title at rivals"
+              image={<News2Svg width="100%" height="100%"/>}
+              onPress={() => console.log('News 2 pressed')}
+              className="flex-1"
+            />
           </View>
 
           {/* One large full-width card */}
           <View className="relative">
-            <View className="w-full h-56 rounded-lg overflow-hidden">
+            <View className="w-full h-64 rounded-lg overflow-hidden">
               <BestFieldSvg width="100%" height="100%" />
             </View>
             <View className="absolute top-4 left-4">
-              <Text className="text-white text-xl font-bold mb-1">
+              <Text className="text-white text-xl font-artico mb-1">
                 ЛУЧШИЕ ФУТБОЛЬНЫЕ ПОЛЯ В ТАШКЕНТЕ
               </Text>
               <Text className="text-white text-sm">Debits - 03 June 2023</Text>
@@ -167,62 +172,87 @@ export const HomeScreen: React.FC = () => {
               <Text className="text-white font-semibold">Читать</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </Container>
 
         {/* Clans Section */}
-        <View className="px-6 mb-8">
-          <View className="flex-row items-center justify-between mb-4">
-            <Text className="text-lg font-bold text-text-primary">CLANS</Text>
-            <TouchableOpacity>
-              <Text className="text-primary font-semibold">View all {'>'}</Text>
-            </TouchableOpacity>
-          </View>
+        <Container padding="md">
+          <SectionHeader 
+            title="CLANS"
+            onViewAll={() => console.log('View all clans')}
+          />
 
           <View className="space-y-3">
             {mockClans.map((clan) => (
-              <View key={clan.id} className="flex-row items-center bg-white rounded-lg p-4">
-                <View 
-                  className="w-12 h-12 rounded-full items-center justify-center mr-4"
-                  style={{ backgroundColor: getRankColor(clan.rank) }}
-                >
-                  <Text className="text-white font-bold text-lg">{clan.rank}</Text>
-                </View>
-                <View className="flex-1 flex-row items-center">
-                  <View className="w-8 h-8 bg-purple-500 rounded-full items-center justify-center mr-3">
-                    <MaterialCommunityIcons name="shield" size={20} color="white" />
-                  </View>
-                  <View className="flex-1">
-                    <Text className="text-base font-bold text-text-primary">{clan.name}</Text>
-                    <Text className="text-sm text-text-secondary">
-                      победа - {clan.wins} | поражение - {clan.losses}
-                    </Text>
-                  </View>
-                </View>
-                <View className="flex-row items-center">
-                  <MaterialCommunityIcons name="trophy" size={16} color="#FFD700" />
-                  <Text className="text-base font-bold text-text-primary ml-1">{clan.score}</Text>
-                </View>
-              </View>
+              <ClanCard
+                key={clan.id}
+                rank={clan.rank}
+                name={clan.name}
+                wins={clan.wins}
+                losses={clan.losses}
+                score={clan.score}
+                logo={<MockClansSvg width={34} height={42} />}
+              />
             ))}
           </View>
-        </View>
+        </Container>
 
         {/* Ready to Play Section */}
-        <View className="px-6 mb-8">
-          <View className="flex-row items-center justify-between">
+        <Container padding="md" className="mb-4">
+          <View className="flex-row items-center justify-between bg-[#EEEDED] px-6 py-4 rounded-lg">
             <View className="flex-1">
-              <Text className="text-2xl font-bold text-primary mb-4">ГОТОВ К ИГРЕ?</Text>
-              <TouchableOpacity className="bg-white border-2 border-primary rounded-lg px-6 py-3 self-start">
-                <Text className="text-primary font-semibold">Создать Матч</Text>
+              <MaskedView
+                style={{ flexDirection: 'row', alignSelf: 'flex-start' }}
+                maskElement={
+                  <Text
+                    style={{
+                      fontSize: 40,
+                      fontFamily: 'Artico-Bold',
+                      fontWeight: 'bold',
+                      lineHeight: 48,
+                      letterSpacing: 0.5,
+                      color: 'black',
+                    }}
+                  >
+                    ГОТОВ К{"\n"}ИГРЕ?
+                  </Text>
+                }
+              >
+                <LinearGradient
+                  colors={['#A2C673', '#43AE30']}
+                  start={{ x: 0, y: 1 }}
+                  end={{ x: 0, y: 0 }}
+                  style={{
+                    width: 320,
+                    height: 100, 
+                    alignItems: 'flex-start',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Text
+                    style={{
+                      opacity: 0,
+                      fontSize: 40,
+                      fontFamily: 'Artico-Bold',
+                      fontWeight: 'bold',
+                      lineHeight: 48,
+                      letterSpacing: 0.5,
+                    }}
+                  >
+                    ГОТОВ К{"\n"}ИГРЕ?
+                  </Text>
+                </LinearGradient>
+              </MaskedView>
+              <TouchableOpacity className="mt-6 border-2 border-primary rounded-lg px-6 py-3 self-start">
+                <Text className="text-primary font-manrope-medium">Создать Матч</Text>
               </TouchableOpacity>
             </View>
             <View className="flex-1">
-              <View className="w-full h-32 rounded-lg overflow-hidden">
-                <ReadyMatchSvg width="100%" height="100%" />
+              <View className="absolute -top-56 -left-14 rounded-lg">
+                <ReadyMatchSvg width="28%" height="50%" />
               </View>
             </View>
           </View>
-        </View>
+        </Container>
       </ScrollView>
     </SafeAreaView>
   );

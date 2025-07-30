@@ -1,7 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, typography, spacing } from '../../styles';
 
 interface CheckboxProps {
   checked: boolean;
@@ -18,44 +17,23 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 }) => {
   return (
     <TouchableOpacity
-      style={styles.container}
+      className="flex-row items-center my-1"
       onPress={onPress}
       disabled={disabled}
       activeOpacity={0.7}
     >
-      <View style={[styles.checkbox, checked && styles.checkboxChecked]}>
+      <View className={`w-5 h-5 border-2 rounded justify-center items-center mr-2 ${
+        checked 
+          ? 'bg-primary border-primary' 
+          : 'border-gray-400'
+      }`}>
         {checked && (
-          <Ionicons name="checkmark" size={16} color={colors.white} />
+          <Ionicons name="checkmark" size={16} color="white" />
         )}
       </View>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && (
+        <Text className="text-sm text-text-secondary flex-1">{label}</Text>
+      )}
     </TouchableOpacity>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: spacing.xs,
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 2,
-    borderColor: colors.gray[400],
-    borderRadius: 4,
-    marginRight: spacing.sm,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkboxChecked: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  label: {
-    fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
-    flex: 1,
-  },
-}); 
+}; 

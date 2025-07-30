@@ -1,62 +1,68 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  ImageBackground,
-  SafeAreaView,
-} from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../types/navigation';
-import { Button } from '../components/common';
+import { View, Text, SafeAreaView, TouchableOpacity, Dimensions } from 'react-native';
+import { Container, LoginButton, RegisterButton } from '../components/common';
+import Ellipse1 from '../../assets/images/onboardingPage/ellipse1.svg';
+import Ellipse2 from '../../assets/images/onboardingPage/ellipse2.svg';
+import Ellipse3 from '../../assets/images/onboardingPage/ellipse3.svg';
+import BgBall from '../../assets/images/onboardingPage/bgBall.svg';
+import PlayerWithBall from '../../assets/images/onboardingPage/playerwithBall.svg';
+import Logo from '../../assets/images/logo.svg';
 
-type OnboardingScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  'Onboarding'
->;
+const { width, height } = Dimensions.get('window');
 
-interface Props {
-  navigation: OnboardingScreenNavigationProp;
-}
-
-export const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
+export const OnboardingScreen: React.FC<any> = ({ navigation }) => {
   return (
-    <SafeAreaView className="flex-1">
-      <ImageBackground
-        source={{ uri: 'https://via.placeholder.com/400x600/4CAF50/FFFFFF?text=Football+Player' }}
-        className="flex-1"
-        resizeMode="cover"
-      >
-        <View className="flex-1 bg-white/95">
-          <View className="items-start px-6 pt-8">
-            <View className="flex-row items-center">
-              <Text className="text-lg font-bold text-primary">FOOT</Text>
-              <Text className="text-sm font-bold text-primary ml-1">HOST</Text>
-            </View>
-          </View>
-          
-          <View className="flex-1 justify-center px-6">
-            <Text className="text-4xl font-bold text-text-primary mb-4 leading-tight">
-              {`ФУТБОЛ ДЛЯ ВСЕХ\nНАЙДИ ПОЛЕ И\nИГРАЙ!`}
-            </Text>
-            <Text className="text-base text-text-secondary mb-16 leading-relaxed">
-              {`Зови друзей, выбирай время и\nвыходи на матч!`}
-            </Text>
-            
-            <View className="gap-4">
-              <Button
-                title="LOGIN"
-                onPress={() => navigation.navigate('Login')}
-                variant="primary"
-              />
-              <Button
-                title="ЗАРЕГИСТРИРОВАТЬСЯ"
-                onPress={() => navigation.navigate('Register')}
-                variant="outline"
-              />
-            </View>
+    <SafeAreaView className="flex-1 bg-white">
+      {/* Background ball - more visible */}
+      <View className="absolute top-32 left-6 right-0 items-center">
+        <BgBall width={width * 0.7} height={width * 0.75} />
+      </View>
+
+      {/* Ellipses positioned exactly as in image */}
+      <View className="absolute top-0 right-0">
+        <Ellipse1 width={width * 0.5} height={height * 0.5} style={{ position: 'absolute', top: -width * 0.37, right: -width * 0.03}} />
+      </View>
+      <View className="absolute bottom-0 left-0">
+        <Ellipse3 width={width * 0.4} height={width * 0.35} style={{ position: 'absolute', bottom: width * 1.1, left: -width * 0.12 }} />
+      </View>
+      <View className="absolute bottom-0 right-0">
+        <Ellipse2 width={width * 0.45} height={width * 0.65} style={{ position: 'absolute', bottom: width * 0.95, right: -width * 0.02 }} />
+      </View>
+
+      {/* Player image - larger and better positioned */}
+      <View className="absolute top-20 left-0 right-0 items-center">
+        <PlayerWithBall width={width * 1.4} height={width * 1.12} />
+      </View>
+
+      <Container padding="sm" className="flex-1">
+        {/* Top bar: logo on left, time on right */}
+        <View className="flex-row justify-between items-center pt-8">
+          <View className="flex-row items-center">
+            <Logo width={100} height={40} />
           </View>
         </View>
-      </ImageBackground>
+
+        {/* Main content */}
+        <View className="flex-1 justify-end pb-6">
+          <Text className="text-5xl font-artico-medium mb-3 mt-16 leading-tight">
+            {`ФУТБОЛ ДЛЯ ВСЕХ
+НАЙДИ ПОЛЕ И
+ИГРАЙ!`}
+          </Text>
+          <Text className="text-lg font-manrope-medium mb-4 opacity-70 leading-relaxed">
+            {`Зови друзей, выбирай время и
+выходи на матч!`}
+          </Text>
+          
+          <LoginButton
+            onPress={() => navigation.navigate('Login')}
+          />
+          <RegisterButton
+            onPress={() => navigation.navigate('Register')}
+            className="mt-4"
+          />
+        </View>
+      </Container>
     </SafeAreaView>
   );
 }; 

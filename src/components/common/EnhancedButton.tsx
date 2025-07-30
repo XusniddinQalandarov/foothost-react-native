@@ -2,13 +2,11 @@ import React from 'react';
 import {
   TouchableOpacity,
   Text,
-  StyleSheet,
   ViewStyle,
   TextStyle,
   ActivityIndicator,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { colors, typography, spacing } from '../../styles';
 
 interface EnhancedButtonProps {
   title: string;
@@ -40,92 +38,63 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
     onPress();
   };
 
-  const buttonStyle = [
-    styles.button,
-    styles[variant],
-    styles[size],
-    disabled && styles.disabled,
-    style,
-  ];
+  const getButtonClasses = () => {
+    const baseClasses = 'rounded-lg justify-center items-center';
+    
+    // Size classes
+    const sizeClasses = {
+      small: 'h-10 px-4',
+      medium: 'h-14 px-6',
+      large: 'h-16 px-8',
+    };
+    
+    // Variant classes
+    const variantClasses = {
+      primary: 'bg-primary',
+      secondary: 'bg-gray-200',
+      outline: 'bg-transparent border border-primary',
+    };
+    
+    const disabledClasses = disabled ? 'bg-gray-300' : '';
+    
+    return `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${disabledClasses}`;
+  };
 
-  const buttonTextStyle = [
-    styles.buttonText,
-    styles[`${variant}Text`],
-    styles[`${size}Text`],
-    disabled && styles.disabledText,
-    textStyle,
-  ];
+  const getTextClasses = () => {
+    const baseClasses = 'font-semibold text-center';
+    
+    // Size classes
+    const sizeClasses = {
+      small: 'text-sm',
+      medium: 'text-base',
+      large: 'text-lg',
+    };
+    
+    // Variant classes
+    const variantClasses = {
+      primary: 'text-white',
+      secondary: 'text-text-primary',
+      outline: 'text-primary',
+    };
+    
+    const disabledClasses = disabled ? 'text-gray-500' : '';
+    
+    return `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${disabledClasses}`;
+  };
 
   return (
     <TouchableOpacity
-      style={buttonStyle}
+      className={getButtonClasses()}
       onPress={handlePress}
       disabled={disabled || loading}
       activeOpacity={0.8}
+      style={style}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'primary' ? colors.white : colors.primary} />
+        <ActivityIndicator color={variant === 'primary' ? 'white' : '#45AF31'} />
       ) : (
-        <Text style={buttonTextStyle}>{title}</Text>
+        <Text className={getTextClasses()} style={textStyle}>{title}</Text>
       )}
     </TouchableOpacity>
   );
-};
-
-const styles = StyleSheet.create({
-  button: {
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  primary: {
-    backgroundColor: colors.primary,
-  },
-  secondary: {
-    backgroundColor: colors.gray[200],
-  },
-  outline: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: colors.primary,
-  },
-  disabled: {
-    backgroundColor: colors.gray[300],
-  },
-  small: {
-    height: 40,
-    paddingHorizontal: spacing.md,
-  },
-  medium: {
-    height: 56,
-    paddingHorizontal: spacing.lg,
-  },
-  large: {
-    height: 64,
-    paddingHorizontal: spacing.xl,
-  },
-  buttonText: {
-    fontWeight: typography.fontWeight.semibold,
-  },
-  primaryText: {
-    color: colors.white,
-  },
-  secondaryText: {
-    color: colors.text.primary,
-  },
-  outlineText: {
-    color: colors.primary,
-  },
-  disabledText: {
-    color: colors.text.disabled,
-  },
-  smallText: {
-    fontSize: typography.fontSize.sm,
-  },
-  mediumText: {
-    fontSize: typography.fontSize.base,
-  },
-  largeText: {
-    fontSize: typography.fontSize.lg,
-  },
-}); 
+}; 

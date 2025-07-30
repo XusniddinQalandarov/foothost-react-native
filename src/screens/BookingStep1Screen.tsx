@@ -1,7 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+// SVGs are assumed to be set up correctly
+import ParkingSvg from '../../assets/images/booking/parking.svg';
+import ShowerSvg from '../../assets/images/booking/shower.svg';
+import OutfitChangeSvg from '../../assets/images/booking/outfitChange.svg';
+import SeatsSvg from '../../assets/images/booking/seats.svg';
+import LightedSvg from '../../assets/images/booking/lighted.svg';
+import TimeOfWorkSvg from '../../assets/images/booking/timeofWork.svg';
+import LengthOfFieldSvg from '../../assets/images/booking/lengthofField.svg';
+import TypeOfFieldSvg from '../../assets/images/booking/typeofField.svg';
+import TypeOfPitchSvg from '../../assets/images/booking/typeofPitch.svg';
+import { Container } from '../components/common';
 
 type BookingStep1ScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -12,12 +24,15 @@ interface Props {
   navigation: BookingStep1ScreenNavigationProp;
 }
 
+const { width } = Dimensions.get('window');
+
 const mockStadium = {
   name: 'BUNYODKOR',
   address: 'Малая кольцевая дорога',
   distance: '4.9 км от вас',
   rating: 9.9,
-  image: require('../../assets/images/stadium/field.svg'),
+  price: '200.000 СУМ',
+  image: require('../../assets/images/stadium/stadium.png'), // Fixed image path
   cover: 'Искусственное покрытие',
   type: 'Открытая',
   size: '20x40',
@@ -30,120 +45,227 @@ const mockStadium = {
     lighting: true,
   },
 };
-const mockSchedule = [
-  { time: '07:00 AM - 09:00 AM', available: false },
-  { time: '07:00 AM - 09:00 AM', available: true },
-  { time: '07:00 AM - 09:00 AM', available: false },
-  { time: '07:00 AM - 09:00 AM', available: false },
-  { time: '07:00 AM - 09:00 AM', available: false },
+
+// Simplified schedule to fit 2x3 grid for demonstration
+const mockSchedule = {
+  today: [
+    { time: '07:00 AM - 09:00 AM', available: false },
+    { time: '07:00 AM - 09:00 AM', available: true },
+    { time: '07:00 AM - 09:00 AM', available: false },
+    { time: '07:00 AM - 09:00 AM', available: false },
+    { time: '07:00 AM - 09:00 AM', available: false },
+    { time: '07:00 AM - 09:00 AM', available: false },
+  ],
+  tomorrow: [
+    { time: '07:00 AM - 09:00 AM', available: true },
+    { time: '09:00 AM - 11:00 AM', available: false },
+    { time: '11:00 AM - 01:00 PM', available: false },
+    { time: '01:00 PM - 03:00 PM', available: true },
+    { time: '03:00 PM - 05:00 PM', available: false },
+    { time: '05:00 PM - 07:00 PM', available: false },
+  ],
+  '11.06': [
+    { time: '07:00 AM - 09:00 AM', available: false },
+    { time: '09:00 AM - 11:00 AM', available: false },
+    { time: '11:00 AM - 01:00 PM', available: true },
+    { time: '01:00 PM - 03:00 PM', available: true },
+    { time: '03:00 PM - 05:00 PM', available: false },
+    { time: '05:00 PM - 07:00 PM', available: false },
+  ],
+};
+
+const mockDates = [
+  { label: 'Сегодня', value: 'today', day: 'Ср' },
+  { label: 'Завтра', value: 'tomorrow', day: 'Чт' },
+  { label: '11.06', value: '11.06', day: '' },
 ];
+
+// Helper component for info cards
+const InfoCard = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string }) => (
+  <View className="bg-gray-100 rounded-lg p-3 flex-1 flex-row items-center h-full">
+    {icon}
+    <View className="ml-2">
+      <Text className="font-manrope-bold text-xs">{label}</Text>
+      <Text className="font-manrope-medium text-[10px] mt-1">{value}</Text>
+    </View>
+  </View>
+);
+
+// Helper component for amenity items
+const AmenityItem = ({ icon, label, available }: { icon: React.ReactNode, label: string, available: boolean }) => (
+    <View className="flex-row items-center">
+        {icon}
+        <View className="ml-2">
+            <Text className="font-manrope-bold text-xs">{label}</Text>
+            <Text className={`font-manrope-medium text-xs ${available ? 'text-green-600' : 'text-red-600'}`}>{available ? 'Есть' : 'Нет'}</Text>
+        </View>
+    </View>
+);
 
 export const BookingStep1Screen: React.FC<Props> = ({ navigation }) => {
   const [selectedDate, setSelectedDate] = useState('today');
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
+
+  // When selectedDate changes, select the first available slot
+  React.useEffect(() => {
+    const available = mockSchedule[selectedDate as keyof typeof mockSchedule]?.find(slot => slot.available);
+    setSelectedTimeSlot(available ? available.time : null);
+  }, [selectedDate]);
 
   const handleSubmit = () => {
-    navigation.navigate('BookingStep2');
+    navigation.navigate('BookingStep3');
   };
 
+  const handleTimeSlotPress = (slot: any) => {
+    if (slot.available) {
+      setSelectedTimeSlot(slot.time);
+    }
+  };
+
+  const currentSchedule = mockSchedule[selectedDate as keyof typeof mockSchedule];
+
   return (
-    <SafeAreaView className="flex-1 bg-background-default">
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Image source={mockStadium.image} className="w-full h-44" />
-        <View className="flex-row items-center justify-between m-4">
-          <Text className="text-lg font-bold text-text-primary">{mockStadium.name}</Text>
-          <Text className="bg-success text-white rounded-lg px-2 text-sm font-bold">{mockStadium.rating}</Text>
+    <SafeAreaView className="flex-1 bg-white">
+      <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+        {/* Header is outside ScrollView, but for simplicity it's represented by this padding */}
+        <View className="h-12 flex-row justify-between items-center px-4">
+             <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Text className="text-black text-2xl">←</Text>
+             </TouchableOpacity>
+             <TouchableOpacity>
+                <Text className="text-black text-2xl font-bold -mt-2">...</Text>
+             </TouchableOpacity>
         </View>
-        <Text className="text-sm text-text-secondary mx-4">{mockStadium.address}</Text>
-        <Text className="text-sm text-text-secondary mx-4 mb-4">{mockStadium.distance}</Text>
-        <View className="flex-row justify-between mx-4 mb-4">
-          <View className="flex-1 bg-white rounded-lg p-2 mx-1 items-center">
-            <Text className="text-xs text-text-secondary">Покрытие</Text>
-            <Text className="text-base font-bold text-text-primary">{mockStadium.cover}</Text>
-          </View>
-          <View className="flex-1 bg-white rounded-lg p-2 mx-1 items-center">
-            <Text className="text-xs text-text-secondary">Тип площадки</Text>
-            <Text className="text-base font-bold text-text-primary">{mockStadium.type}</Text>
-          </View>
-        </View>
-        <View className="flex-row justify-between mx-4 mb-4">
-          <View className="flex-1 bg-white rounded-lg p-2 mx-1 items-center">
-            <Text className="text-xs text-text-secondary">Длина x Ширина (м)</Text>
-            <Text className="text-base font-bold text-text-primary">{mockStadium.size}</Text>
-          </View>
-          <View className="flex-1 bg-white rounded-lg p-2 mx-1 items-center">
-            <Text className="text-xs text-text-secondary">Время работы</Text>
-            <Text className="text-base font-bold text-text-primary">{mockStadium.workTime}</Text>
+        
+        {/* Image Carousel */}
+        <View className="relative">
+          <Image source={mockStadium.image} className="w-full h-56" resizeMode="cover" />
+          <View className="absolute bottom-4 left-0 right-0 flex-row justify-center space-x-2">
+            {[1, 2, 3, 4, 5].map((dot) => (
+              <View key={dot} className={`w-2 h-2 rounded-full ${dot === 1 ? 'bg-white' : 'bg-white/50'}`} />
+            ))}
           </View>
         </View>
-        <Text className="text-lg font-bold text-text-primary mx-4 mt-6 mb-2">РАСПИСАНИЕ:</Text>
-        <View className="flex-row justify-around mb-4">
-          <TouchableOpacity 
-            className={`flex-1 bg-white border border-primary rounded-lg p-2 mx-1 items-center ${
-              selectedDate === 'today' ? 'bg-primary' : ''
-            }`}
-            onPress={() => setSelectedDate('today')}
-          >
-            <Text className={`text-base ${selectedDate === 'today' ? 'text-white' : 'text-primary'}`}>Сегодня</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            className={`flex-1 bg-white border border-primary rounded-lg p-2 mx-1 items-center ${
-              selectedDate === 'tomorrow' ? 'bg-primary' : ''
-            }`}
-            onPress={() => setSelectedDate('tomorrow')}
-          >
-            <Text className={`text-base ${selectedDate === 'tomorrow' ? 'text-white' : 'text-primary'}`}>Завтра</Text>
-          </TouchableOpacity>
-          <TouchableOpacity className="flex-1 bg-white border border-primary rounded-lg p-2 mx-1 items-center">
-            <Text className="text-base text-primary">11.06</Text>
-          </TouchableOpacity>
-        </View>
-        <View className="mx-4 mb-4">
-          {mockSchedule.map((slot, idx) => (
-            <View key={idx} className={`rounded-lg p-3 mb-2 ${
-              slot.available ? 'bg-success' : 'bg-gray-200'
-            }`}>
-              <Text className={`text-base ${slot.available ? 'text-white font-bold' : 'text-text-primary'}`}>
-                {slot.time}
-              </Text>
-              <Text className="text-sm text-text-secondary">
-                {slot.available ? 'Свободно' : 'Мест Нет'}
-              </Text>
+        <Container padding="sm">
+          {/* Field Overview */}
+          <View className="py-2">
+            <View className="flex-row justify-between items-start">
+              <View>
+                <View className="flex-row items-center">
+                  <Text className="text-text-primary font-artico-medium text-[30px]">{mockStadium.name}</Text>
+                  <View className="bg-primary rounded-md px-2 py-1 ml-2 flex-row items-center">
+                    <Text className="text-white font-bold text-sm mr-1">{mockStadium.rating}</Text>
+                    <MaterialCommunityIcons name="star" size={14} color="white" />
+                  </View>
+                </View>
+                <View className="flex-row items-center mt-1">
+                  <MaterialCommunityIcons name="map-marker" size={14} color="#666" />
+                  <Text className="text-gray-500  font-manrope-medium text-xs ml-1">{mockStadium.address}</Text>
+                </View>
+              </View>
+              <View className="items-end">
+                  <Text className="text-black font-artico-medium text-[30px]">{mockStadium.price}</Text>
+                  <Text className="text-gray-500 font-manrope-medium text-xs mt-1">{mockStadium.distance}</Text>
+              </View>
             </View>
-          ))}
-        </View>
-        <Text className="text-lg font-bold text-text-primary mx-4 mt-6 mb-2">УДОБСТВО</Text>
-        <View className="flex-row flex-wrap mx-4 mb-2">
-          <Text className={`text-sm mr-4 mb-2 ${!mockStadium.amenities.parking ? 'text-gray-400' : 'text-text-primary'}`}>
-            Парковка {mockStadium.amenities.parking ? 'Есть' : 'Нет'}
-          </Text>
-          <Text className="text-sm mr-4 mb-2 text-text-primary">
-            Раздевалки {mockStadium.amenities.locker ? 'Есть' : 'Нет'}
-          </Text>
-          <Text className="text-sm mr-4 mb-2 text-text-primary">
-            Душ {mockStadium.amenities.shower ? 'Есть' : 'Нет'}
-          </Text>
-        </View>
-        <View className="flex-row flex-wrap mx-4 mb-4">
-          <Text className="text-sm mr-4 mb-2 text-text-primary">
-            Трибуны {mockStadium.amenities.tribune ? 'Есть' : 'Нет'}
-          </Text>
-          <Text className="text-sm mr-4 mb-2 text-text-primary">
-            Освещение {mockStadium.amenities.lighting ? 'Есть' : 'Нет'}
-          </Text>
-        </View>
-        <View className="mx-4 mb-6">
-          <Text className="text-lg font-bold text-text-primary mb-2">МЕСТОПОЛОЖЕНИЕ:</Text>
-          <View className="bg-gray-200 rounded-lg p-4 items-center">
-            <Text>Map Placeholder</Text>
           </View>
-        </View>
-        <TouchableOpacity 
-          className="bg-primary rounded-lg mx-4 mb-6 py-4 items-center"
-          onPress={handleSubmit}
-        >
-          <Text className="text-white text-lg font-bold">Отправить заявку</Text>
-        </TouchableOpacity>
+          {/* 1. Field Specifications (2x2 Grid) */}
+          <View className="mb-6">
+            <View className="flex-row justify-center align-center mb-2">
+              <InfoCard icon={<TypeOfPitchSvg width={36} height={36} />} label="Покрытие" value={mockStadium.cover} />
+              <View className="w-2" />
+              <InfoCard icon={<TypeOfFieldSvg width={36} height={36} />} label="Тип площадки" value={mockStadium.type} />
+            </View>
+            <View className="flex-row justify-between">
+              <InfoCard icon={<LengthOfFieldSvg width={36} height={36} />} label="Длина х Ширина (м)" value={mockStadium.size} />
+              <View className="w-2" />
+              <InfoCard icon={<TimeOfWorkSvg width={36} height={36} />} label="Время работы" value={mockStadium.workTime} />
+            </View>
+          </View>
+          {/* Schedule Section */}
+          <View className="mb-6">
+            <Text className="text-black font-artico-medium text-xl mb-3">РАСПИСАНИЕ:</Text>
+            <View className="flex-row justify-between mb-4">
+              {mockDates.map((date, idx) => (
+                <TouchableOpacity
+                  key={date.value}
+                  className={`flex-1 rounded-lg py-2 items-center ${selectedDate === date.value ? 'bg-primary' : 'bg-white border border-[#758A80]'}${idx !== mockDates.length - 1 ? ' mr-2' : ''}`}
+                  onPress={() => setSelectedDate(date.value)}
+                >
+                  <Text className={`font-bold text-sm ${selectedDate === date.value ? 'text-white' : 'text-black'}`}>{date.label}</Text>
+                  {date.day && <Text className={`text-xs ${selectedDate === date.value ? 'text-white' : 'text-gray-500'}`}>{date.day}</Text>}
+                </TouchableOpacity>
+              ))}
+            </View>
+            {/* 2. Time Slots (2x3 Grid) */}
+            <View>
+              {Array.from({ length: Math.ceil(currentSchedule.length / 2) }).map((_, rowIndex) => (
+                <View key={rowIndex} className="flex-row justify-between mb-2">
+                  {currentSchedule.slice(rowIndex * 2, rowIndex * 2 + 2).map((slot, slotIndex) => {
+                    const isSelected = selectedTimeSlot === slot.time && slot.available;
+                    return (
+                      <TouchableOpacity
+                        key={slotIndex}
+                        style={{ width: '49%' }}
+                        className={`rounded-lg p-2 items-center justify-center h-16
+                          ${!slot.available ? 'bg-gray-100 border border-[#758A80]' : ''}
+                          ${slot.available && !isSelected ? 'bg-white border border-green-600' : ''}
+                          ${isSelected ? 'bg-primary border border-green-600' : ''}
+                        `}
+                        onPress={() => handleTimeSlotPress(slot)}
+                        disabled={!slot.available}
+                      >
+                        <Text className={`font-bold text-sm ${!slot.available ? 'text-gray-400' : isSelected ? 'text-white' : 'text-green-600'}`}>{slot.time}</Text>
+                        <Text className={`text-xs ${!slot.available ? 'text-gray-400' : isSelected ? 'text-white' : 'text-green-600'}`}>{slot.available ? 'Свободно' : 'Мест Нет'}</Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                  {/* Fill empty space if odd number of slots */}
+                  {currentSchedule.slice(rowIndex * 2, rowIndex * 2 + 2).length === 1 && <View style={{ width: '49%' }} />}
+                </View>
+              ))}
+            </View>
+          </View>
+          {/* 3. Amenities Section (3-Column Layout) */}
+          <View className="mb-6">
+              <Text className="font-artico-medium text-xl mb-4">УДОБСТВО:</Text>
+              <View className="flex-row justify-between">
+                  {/* Column 1 */}
+                  <View className="space-y-4">
+                      <AmenityItem icon={<ParkingSvg width={28} height={28}/>} label="Парковка" available={mockStadium.amenities.parking} />
+                      <AmenityItem icon={<ShowerSvg width={28} height={28}/>} label="Душ" available={mockStadium.amenities.shower} />
+                  </View>
+                  {/* Column 2 */}
+                  <View className="space-y-4">
+                      <AmenityItem icon={<OutfitChangeSvg width={28} height={28}/>} label="Раздевалки" available={mockStadium.amenities.locker} />
+                      <AmenityItem icon={<SeatsSvg width={28} height={28}/>} label="Трибуны" available={mockStadium.amenities.tribune} />
+                  </View>
+                  {/* Column 3 */}
+                  <View className="space-y-4">
+                       <AmenityItem icon={<LightedSvg width={28} height={28}/>} label="Освещение" available={mockStadium.amenities.lighting} />
+                  </View>
+              </View>
+          </View>
+          {/* Location Section */}
+          <View className="mb-32">
+            <Text className="font-artico-medium text-xl mb-3">МЕСТОПОЛОЖЕНИЕ:</Text>
+            <Image source={require('../../assets/images/map-placeholder.png')} className="w-full h-40 rounded-xl" />
+          </View>
+        </Container>
       </ScrollView>
+
+      {/* Sticky Send Request Button */}
+      <View className="absolute bottom-0 left-0 right-0 px-4 pt-2 pb-6">
+        <TouchableOpacity
+          className={`rounded-xl py-4 items-center ${
+            selectedTimeSlot ? 'bg-primary' : 'bg-gray-300'
+          }`}
+          onPress={handleSubmit}
+          disabled={!selectedTimeSlot}
+        >
+          <Text className="text-white font-manrope-bold text-md">Отправить заявку</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
-}; 
+};

@@ -6,10 +6,29 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        // Artico Fonts
+        'artico': ['Artico-Black', 'sans-serif'],
+        'artico-bold': ['Artico-Bold', 'sans-serif'],
+        'artico-medium': ['Artico-Medium', 'sans-serif'],
+        'artico-black-italic': ['Artico-BlackItalic', 'sans-serif'],
+        
+        // ManRope Fonts
+        'manrope': ['ManRope-Regular', 'sans-serif'],
+        'manrope-extralight': ['ManRope-ExtraLight', 'sans-serif'],
+        'manrope-light': ['ManRope-Light', 'sans-serif'],
+        'manrope-medium': ['ManRope-Medium', 'sans-serif'],
+        'manrope-semibold': ['ManRope-SemiBold', 'sans-serif'],
+        'manrope-bold': ['ManRope-Bold', 'sans-serif'],
+        'manrope-extrabold': ['ManRope-ExtraBold', 'sans-serif'],
+        
+        // BebasNeue Fonts
+        'bebas': ['BebasNeue-Regular', 'sans-serif'],
+      },
       colors: {
-        primary: '#4CAF50',
-        secondary: '#2196F3',
-        success: '#4CAF50',
+        primary: '#45AF31',
+        secondary: '#525252',
+        success: '#45AF31',
         warning: '#FF9800',
         error: '#F44336',
         background: {
@@ -19,6 +38,10 @@ module.exports = {
         text: {
           primary: '#212121',
           secondary: '#757575',
+          placeholder: "#A8A8A8",
+          grays100: "#322D2D",
+          grays80: "#5B5757",
+
         },
         gray: {
           100: '#F5F5F5',
@@ -50,6 +73,10 @@ module.exports = {
         'xl': 32,
         '2xl': 48,
         '3xl': 64,
+        // Global padding values
+        'screen': 24, // Standard screen padding
+        'screen-sm': 16, // Smaller screen padding
+        'screen-lg': 32, // Larger screen padding
       },
     },
   },

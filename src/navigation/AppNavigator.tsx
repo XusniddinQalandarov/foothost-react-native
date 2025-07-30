@@ -8,7 +8,6 @@ import { PersonalDataScreen } from '../screens/PersonalDataScreen';
 import { AboutUsScreen } from '../screens/AboutUsScreen';
 import { PhoneVerificationScreen } from '../screens/PhoneVerificationScreen';
 import { BookingStep1Screen } from '../screens/BookingStep1Screen';
-import { BookingStep2Screen } from '../screens/BookingStep2Screen';
 import { BookingStep3Screen } from '../screens/BookingStep3Screen';
 import { MainTabNavigator } from './MainTabNavigator';
 
@@ -34,8 +33,7 @@ export const AppNavigator: React.FC = () => {
         <Stack.Screen name="AboutUs" component={AboutUsScreen} />
         <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen} />
         <Stack.Screen name="BookingStep1" component={BookingStep1Screen} />
-        <Stack.Screen name="BookingStep2" component={BookingStep2Screen} />
-        <Stack.Screen name="BookingStep3" component={BookingStep3Screen} />
+        <Stack.Screen name="BookingStep3" component={BookingStep3Screen} options={{ presentation: 'transparentModal', headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Container } from '../components/common';
 
 const mockTournaments = [
   {
@@ -40,42 +41,41 @@ const mockTournaments = [
 
 export const TournamentsScreen: React.FC = () => {
   return (
-    <SafeAreaView className="flex-1 bg-background-default">
+    <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-6 py-4 border-b border-gray-200">
+      <View className="flex-row items-center justify-between px-4 pt-4 pb-2">
         <TouchableOpacity className="p-2">
-          <MaterialCommunityIcons name="arrow-left" size={24} color="#212121" />
+          <MaterialCommunityIcons name="arrow-left" size={28} color="#212121" />
         </TouchableOpacity>
-        <Text className="text-lg font-bold text-text-primary">ТУРНИРЫ</Text>
+        <Text className="text-[28px] font-artico-bold text-text-primary text-center flex-1 -ml-8">ТУРНИРЫ</Text>
         <TouchableOpacity className="p-2">
-          <MaterialCommunityIcons name="dots-vertical" size={24} color="#212121" />
+          <MaterialCommunityIcons name="dots-vertical" size={28} color="#212121" />
         </TouchableOpacity>
       </View>
 
       {/* Tournament List */}
-      <ScrollView className="flex-1 px-6 pt-4" showsVerticalScrollIndicator={false}>
-        {mockTournaments.map((tournament) => (
-          <View key={tournament.id} className="bg-gray-100 rounded-xl p-6 mb-4">
-            <Text className="text-lg font-bold text-text-primary mb-2">{tournament.title}</Text>
-            <Text className="text-base text-text-secondary mb-1">{tournament.format}</Text>
-            <Text className="text-base text-text-secondary mb-4">{tournament.cost}</Text>
-            
-            <View className="mb-4">
-              <View className="flex-row items-center mb-1">
-                <MaterialCommunityIcons name="map-marker" size={16} color="#4CAF50" />
-                <Text className="text-sm text-text-secondary ml-1">{tournament.location}</Text>
-              </View>
-              
-              <View className="flex-row items-center mb-1">
-                <MaterialCommunityIcons name="account-group" size={16} color="#4CAF50" />
-                <Text className="text-sm text-text-secondary ml-1">{tournament.participants}</Text>
+      <Container padding="sm">
+        <ScrollView className="flex-1 pt-2" showsVerticalScrollIndicator={false}>
+          {mockTournaments.map((tournament) => (
+            <View key={tournament.id} className="bg-gray-100 rounded-xl px-4 py-3 mb-4 shadow-sm">
+              <Text className="text-lg font-manrope-bold text-text-primary mb-1">{tournament.title}</Text>
+              <Text className="text-base text-[#150000] mb-0.5">{tournament.format}</Text>
+              <Text className="text-base text-[#150000] mb-2">Стоимость: <Text className="font-manrope-bold">200 000</Text> с команды</Text>
+              <View className="flex-row items-center justify-between mt-2">
+                <View className="flex-row items-center">
+                  <MaterialCommunityIcons name="map-marker" size={18} color="#45AF31" />
+                  <Text className="text-xs text-text-primary ml-1 font-manrope-bold">{tournament.location}</Text>
+                </View>
+                <View className="flex-row items-center">
+                  <MaterialCommunityIcons name="account-group" size={18} color="#45AF31" />
+                  <Text className="text-xs text-text-primary ml-1 font-manrope-bold">{tournament.participants}</Text>
+                </View>
+                <Text className="text-xs text-text-primary font-manrope-bold">{tournament.time}</Text>
               </View>
             </View>
-            
-            <Text className="text-sm font-semibold text-primary">{tournament.time}</Text>
-          </View>
-        ))}
-      </ScrollView>
+          ))}
+        </ScrollView>
+      </Container>
     </SafeAreaView>
   );
 }; 

@@ -11,7 +11,7 @@ interface ButtonProps {
   variant?: 'primary' | 'secondary' | 'outline';
   disabled?: boolean;
   loading?: boolean;
-  className?: string;
+  className?: string; 
   textClassName?: string;
 }
 
@@ -62,9 +62,66 @@ export const Button: React.FC<ButtonProps> = ({
       activeOpacity={0.8}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'primary' ? '#FFFFFF' : '#4CAF50'} />
+        <ActivityIndicator color={variant === 'primary' ? '#FFFFFF' : '#45AF31'} />
       ) : (
         <Text className={getTextClasses()}>{title}</Text>
+      )}
+    </TouchableOpacity>
+  );
+};
+
+// Login Button - matches OnboardingScreen style
+interface LoginButtonProps {
+  onPress: () => void;
+  loading?: boolean;
+  disabled?: boolean;
+  className?: string;
+}
+
+export const LoginButton: React.FC<LoginButtonProps> = ({
+  onPress,
+  loading = false,
+  disabled = false,
+  className = '',
+}) => {
+  return (
+    <Button
+      title="LOGIN"
+      onPress={onPress}
+      variant="primary"
+      loading={loading}
+      disabled={disabled}
+      textClassName="font-artico-medium text-xl"
+      className={className}
+    />
+  );
+};
+
+// Register Button - matches OnboardingScreen style
+interface RegisterButtonProps {
+  onPress: () => void;
+  disabled?: boolean;
+  loading?: boolean;
+  className?: string;
+}
+
+export const RegisterButton: React.FC<RegisterButtonProps> = ({
+  onPress,
+  disabled = false,
+  loading = false,
+  className = '',
+}) => {
+  return (
+    <TouchableOpacity
+      className={`w-full bg-[#0000000D] border border-[#0000000D] rounded-lg py-4 items-center ${className}`}
+      onPress={onPress}
+      disabled={disabled || loading}
+      activeOpacity={0.8}
+    >
+      {loading ? (
+        <ActivityIndicator color="#45AF31" />
+      ) : (
+        <Text className="text-lg font-artico-medium">ЗАРЕГИСТРИРОВАТЬСЯ</Text>
       )}
     </TouchableOpacity>
   );

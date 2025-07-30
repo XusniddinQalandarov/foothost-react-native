@@ -24,16 +24,16 @@ export const MainTabNavigator: React.FC<MainTabNavigatorProps> = ({ navigation }
         tabBarStyle: { backgroundColor: '#F5F5F5', borderTopWidth: 0, height: 60 },
         tabBarIcon: ({ focused, color, size }: { focused: boolean; color: string; size: number }) => {
           if (route.name === 'Home') {
-            return <MaterialCommunityIcons name="home" size={28} color={focused ? '#4CAF50' : '#212121'} />;
+                            return <MaterialCommunityIcons name="home" size={28} color={focused ? '#45AF31' : '#212121'} />;
           }
           if (route.name === 'StadiumList') {
-            return <MaterialCommunityIcons name="soccer-field" size={28} color={focused ? '#4CAF50' : '#212121'} />;
+                            return <MaterialCommunityIcons name="soccer-field" size={28} color={focused ? '#45AF31' : '#212121'} />;
           }
           if (route.name === 'Tournaments') {
-            return <MaterialCommunityIcons name="soccer" size={28} color={focused ? '#4CAF50' : '#212121'} />;
+                            return <MaterialCommunityIcons name="soccer" size={28} color={focused ? '#45AF31' : '#212121'} />;
           }
           if (route.name === 'Profile') {
-            return <MaterialCommunityIcons name="account-outline" size={28} color={focused ? '#4CAF50' : '#212121'} />;
+                            return <MaterialCommunityIcons name="account-outline" size={28} color={focused ? '#45AF31' : '#212121'} />;
           }
           return null;
         },

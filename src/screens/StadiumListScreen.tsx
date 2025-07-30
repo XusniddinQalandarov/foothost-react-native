@@ -1,7 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
+import { FieldCard, Container, Header, FilterButton } from '../components/common';
+import Logo from '../../assets/images/logo.svg';
+
+// 1. Add 'price' to the mock data
+const mockStadiums = [
+  { id: 1, name: 'BUNYODKOR', location: 'Малая кольцевая дорога', distance: '4.9 км от вас', rating: 9.9, price: 200000, image: require('../../assets/images/homepage/homepage.png') },
+  { id: 2, name: 'BUNYODKOR', location: 'Малая кольцевая дорога', distance: '4.9 км от вас', rating: 9.9, price: 200000, image: require('../../assets/images/homepage/homepage.png') },
+  { id: 3, name: 'BUNYODKOR', location: 'Малая кольцевая дорога', distance: '4.9 км от вас', rating: 9.9, price: 200000, image: require('../../assets/images/homepage/homepage.png') },
+];
+
+const mockDates = [
+  { label: 'Сегодня', value: 'today', day: 'Ср' },
+  { label: 'Завтра', value: 'tomorrow', day: 'Чт' },
+  { label: '11.06', value: '11.06', day: 'Pt' },
+];
 
 type StadiumListScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -13,18 +28,6 @@ interface Props {
   rootNavigation?: StackNavigationProp<RootStackParamList, 'Main'>;
 }
 
-const mockStadiums = [
-  { id: 1, name: 'BUNYODKOR', address: 'Малая кольцевая дорога', distance: '4.9 км от вас', rating: 9.9, image: require('../../assets/images/homepage/homepage.png') },
-  { id: 2, name: 'BUNYODKOR', address: 'Малая кольцевая дорога', distance: '4.9 км от вас', rating: 9.9, image: require('../../assets/images/homepage/homepage.png') },
-  { id: 3, name: 'BUNYODKOR', address: 'Малая кольцевая дорога', distance: '4.9 км от вас', rating: 9.9, image: require('../../assets/images/homepage/homepage.png') },
-];
-
-const mockDates = [
-  { label: 'Сегодня', value: 'today' },
-  { label: 'Завтра', value: 'tomorrow' },
-  { label: '11.06', value: '11.06' },
-];
-
 export const StadiumListScreen: React.FC<Props> = ({ navigation, rootNavigation }) => {
   const [selectedDate, setSelectedDate] = useState('today');
 
@@ -34,55 +37,72 @@ export const StadiumListScreen: React.FC<Props> = ({ navigation, rootNavigation 
     }
   };
 
+  const textShadow = {
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  };
+
   return (
-    <SafeAreaView className="flex-1 bg-background-default">
-      <View className="flex-row items-center p-4 justify-between">
-        <TouchableOpacity>
-          <Text className="text-primary text-base">{'< Back'}</Text>
-        </TouchableOpacity>
-        <Text className="text-lg font-bold text-text-primary">СПИСОК ПОЛЕЙ</Text>
-        <Text className="text-sm text-text-secondary">121 полей</Text>
+    <SafeAreaView className="flex-1 bg-white">
+      {/* Header Layout */}
+      <Header
+        left={<TouchableOpacity><Text>{'< Back'}</Text></TouchableOpacity>}
+        title="СПИСОК ПОЛЕЙ"
+        right={<TouchableOpacity><Text>...</Text></TouchableOpacity>}
+      />
+
+      {/* Stadium count subtext */}
+      <View className="items-center pb-2 -mt-2">
+        <Text className="text-gray-600 font-manrope-medium text-xs">121 стадион</Text>
       </View>
-      <View className="flex-row justify-around mb-4">
+
+      <View className="flex-row space-x-3 p-2 bg-white">
         {mockDates.map((date) => (
-          <TouchableOpacity
+          <FilterButton
             key={date.value}
-            className={`flex-1 bg-white border border-primary rounded-lg p-2 mx-1 items-center ${
-              selectedDate === date.value ? 'bg-primary' : ''
-            }`}
+            text={date.label}
+            subLabel={date.day}
+            isActive={selectedDate === date.value}
+            hideIcon
             onPress={() => setSelectedDate(date.value)}
-          >
-            <Text className={`text-base ${
-              selectedDate === date.value ? 'text-white' : 'text-primary'
-            }`}>
-              {date.label}
-            </Text>
-          </TouchableOpacity>
+            activeColor="#45AF31"
+            inactiveColor="#fff"
+            activeTextColor="#fff"
+            inactiveTextColor="#212121"
+            activeBorderColor="#45AF31"
+            inactiveBorderColor="#E0E0E0"
+            className="mr-2"
+          />
         ))}
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+
+      <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+        {/* Use FieldCard for each stadium */}
         {mockStadiums.map((item) => (
-          <View key={item.id} className="bg-white rounded-lg m-4 overflow-hidden shadow-sm">
-            <Image source={item.image} className="w-full h-40" />
-            <View className="p-4">
-              <Text className="text-base font-bold text-text-primary mb-1">{item.name}</Text>
-              <Text className="text-sm text-text-secondary mb-1">{item.address}</Text>
-              <View className="flex-row items-center mb-2">
-                <Text className="text-sm text-text-secondary flex-1">{item.distance}</Text>
-                <View className="bg-success rounded-lg px-2 py-1">
-                  <Text className="text-white text-sm font-bold">{item.rating}</Text>
-                </View>
-              </View>
-              <TouchableOpacity 
-                className="bg-primary rounded-lg py-2 items-center mt-2"
+          <Container key={item.id} padding="md" className="mb-2">
+            <View className="rounded-xl overflow-hidden shadow-lg bg-white">
+              <FieldCard
+                name={item.name}
+                location={item.location}
+                rating={item.rating}
+                distance={item.distance}
+                price={item.price}
+                image={item.image}
+                ratingPosition="next-to-name"
                 onPress={handleDetailPress}
+              />
+              <TouchableOpacity 
+                className="bg-primary py-3 items-center"
+                onPress={handleDetailPress}
+                style={{ marginTop: 0 }}
               >
                 <Text className="text-white text-base font-bold">Подробнее</Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </Container>
         ))}
       </ScrollView>
     </SafeAreaView>
   );
-}; 
+};
