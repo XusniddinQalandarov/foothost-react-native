@@ -1,37 +1,28 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  SafeAreaView,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../types/navigation';
-
-type ProfileScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  'Profile'
->;
-
-interface Props {
-  navigation: ProfileScreenNavigationProp;
-}
+import { Header, Container, Button, SectionHeader } from '../components/common';
+import { ClanCard } from '../components/common/ClanCard';
+import LogoWhite from '../../assets/images/logo_white.svg';
+import MockClansSvg from '../../assets/images/homepage/mockClans.svg';
 
 const mockUser = {
   name: 'ШУКУР ГАЙНУТДИНОВ',
   level: 'Полупрофи',
-  subscribers: 4,
-  subscriptions: 4,
-  views: 4,
   rating: 2900,
   tournaments: 7,
   wins: 3,
   matchesPlayed: 58,
   weeksInRow: 3,
   role: 'Вратарь / Полузащитник',
+  clan: {
+    id: 1,
+    name: 'Paxtakor',
+    wins: 37,
+    losses: 8,
+    score: 1886,
+    rank: 1,
+  },
 };
 
 const mockUpcomingMatches = [
@@ -39,111 +30,78 @@ const mockUpcomingMatches = [
   { id: 2, time: 'Завтра, 20:00', format: '7x7', location: '@Jar' },
 ];
 
-export const ProfileScreen: React.FC<Props> = ({ navigation }) => {
+export const ProfileScreen: React.FC = () => {
   return (
-    <SafeAreaView className="flex-1 bg-background-default">
-      {/* Header */}
-      <View className="bg-primary pt-12 pb-4">
-        <View className="px-6">
-          <Text className="text-lg font-bold text-white">FOOT HOST</Text>
+    <SafeAreaView className="flex-1 bg-white">
+      {/* Green Header - taller for profile picture overlap */}
+      <View className="bg-primary" style={{ height: 160, position: 'relative' }}>
+        <Header
+          left={<LogoWhite width={100} height={40} style={{ marginTop: 16 }} />}
+          title={undefined}
+          right={<TouchableOpacity><MaterialCommunityIcons name="dots-vertical" size={28} color="#fff" /></TouchableOpacity>}
+          style={{ backgroundColor: 'transparent', paddingTop: 32, paddingBottom: 0 }}
+        />
+        {/* Profile Picture - absolute, overlaps green and white */}
+        <View style={{ position: 'absolute', left: 0, right: 0, bottom: -64, alignItems: 'center', zIndex: 10 }}>
+          <View className="w-32 h-32 rounded-full bg-white items-center justify-center border-4 border-primary" style={{ elevation: 4 }}>
+            <View className="w-28 h-28 bg-gray-300 rounded-full items-center justify-center">
+              <MaterialCommunityIcons name="account" size={64} color="#757575" />
+              <TouchableOpacity className="absolute inset-0 items-center justify-center w-full h-full">
+                <MaterialCommunityIcons name="camera" size={38} color="white" />
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </View>
-
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Profile Picture and Name */}
-        <View className="items-center mt-6 mb-6">
-          <View className="relative">
-            <View className="w-24 h-24 bg-gray-300 rounded-full items-center justify-center">
-              <MaterialCommunityIcons name="account" size={48} color="#757575" />
+      <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 72 }}>
+        <Container padding="sm">
+          {/* Name and Level */}
+          <View className="items-center mt-2 mb-2">
+            <Text className="text-2xl font-artico-bold text-text-primary text-center">{mockUser.name} <MaterialCommunityIcons name="soccer" size={22} color="#FFD700" /></Text>
+            <View className="flex-row items-center mt-1">
+              <MaterialCommunityIcons name="trophy" size={18} color="#FFD700" />
+              <Text className="ml-2 text-base font-manrope-bold text-text-secondary">{mockUser.level}</Text>
             </View>
-            <TouchableOpacity className="absolute bottom-0 right-0 bg-primary rounded-full p-2">
-              <MaterialCommunityIcons name="camera" size={16} color="white" />
-            </TouchableOpacity>
           </View>
-          <View className="flex-row items-center mt-4">
-            <Text className="text-xl font-bold text-text-primary">{mockUser.name}</Text>
-            <MaterialCommunityIcons name="trophy" size={20} color="#FFD700" />
+          {/* Clan Info */}
+          {mockUser.clan && (
+            <View className="items-center mb-4">
+              <ClanCard
+                rank={mockUser.clan.rank}
+                name={mockUser.clan.name}
+                wins={mockUser.clan.wins}
+                losses={mockUser.clan.losses}
+                score={mockUser.clan.score}
+                logo={<MockClansSvg width={34} height={42} />}
+              />
+            </View>
+          )}
+          {/* Player Statistics */}
+          <SectionHeader title="СТАТИСТИКА ИГРОКА" />
+          <View className="bg-white rounded-lg p-4 mb-4 flex-row justify-between items-center border border-gray-200">
+            <View className="flex-1">
+              <Text className="text-sm text-text-secondary mb-1">Рейтинг: <Text className="font-manrope-bold text-text-primary">{mockUser.rating}</Text> очков</Text>
+              <Text className="text-sm text-text-secondary mb-1">Турниры: <Text className="font-manrope-bold text-text-primary">{mockUser.tournaments}</Text> участия</Text>
+              <Text className="text-sm text-text-secondary mb-1">Победы: <Text className="font-manrope-bold text-text-primary">{mockUser.wins}</Text> турнира</Text>
+              <Text className="text-sm text-text-secondary">Матчи сыграно: <Text className="font-manrope-bold text-text-primary">{mockUser.matchesPlayed}</Text></Text>
+            </View>
+            <View className="w-px bg-gray-300 mx-4 self-stretch" />
+            <View className="flex-1">
+              <Text className="text-sm text-text-secondary mb-1"><Text className="font-manrope-bold text-text-primary">{mockUser.weeksInRow}</Text> - недели подряд</Text>
+              <Text className="text-sm text-text-secondary mb-1">Активный режим</Text>
+              <Text className="text-sm text-text-secondary">Амплуа: <Text className="font-manrope-bold text-text-primary">{mockUser.role}</Text></Text>
+            </View>
           </View>
-          <View className="flex-row items-center mt-1">
-            <Text className="text-base text-text-secondary">{mockUser.level}</Text>
-            <MaterialCommunityIcons name="trophy" size={16} color="#FFD700" />
-          </View>
-        </View>
-
-        {/* Engagement Statistics */}
-        <View className="flex-row justify-around mx-6 mb-6">
-          <View className="bg-gray-100 rounded-lg p-4 flex-1 mx-1 items-center">
-            <Text className="text-lg font-bold text-text-primary">{mockUser.subscribers}</Text>
-            <Text className="text-sm text-text-secondary">Подписчики</Text>
-          </View>
-          <View className="bg-gray-100 rounded-lg p-4 flex-1 mx-1 items-center">
-            <Text className="text-lg font-bold text-text-primary">{mockUser.subscriptions}</Text>
-            <Text className="text-sm text-text-secondary">Подписки</Text>
-          </View>
-          <View className="bg-gray-100 rounded-lg p-4 flex-1 mx-1 items-center">
-            <Text className="text-lg font-bold text-text-primary">{mockUser.views}</Text>
-            <Text className="text-sm text-text-secondary">Просмотры</Text>
-          </View>
-        </View>
-
-        {/* Action Buttons */}
-        <View className="flex-row mx-6 mb-6">
-          <TouchableOpacity className="flex-1 bg-primary rounded-lg py-3 mr-2">
-            <Text className="text-white text-center font-semibold">Добавить друзей</Text>
-          </TouchableOpacity>
-          <TouchableOpacity className="w-12 h-12 bg-primary rounded-lg items-center justify-center">
-            <MaterialCommunityIcons name="share-variant" size={20} color="white" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Player Statistics */}
-        <View className="mx-6 mb-6">
-          <Text className="text-lg font-bold text-text-primary mb-4">СТАТИСТИКА ИГРОКА</Text>
-          <View className="bg-white rounded-lg p-4">
-            <View className="flex-row">
-              <View className="flex-1">
-                <Text className="text-sm text-text-secondary mb-1">Рейтинг: {mockUser.rating} очков</Text>
-                <Text className="text-sm text-text-secondary mb-1">Турниры: {mockUser.tournaments} участия</Text>
-                <Text className="text-sm text-text-secondary mb-1">Победы: {mockUser.wins} турнира</Text>
-                <Text className="text-sm text-text-secondary">Матчи сыграно: {mockUser.matchesPlayed}</Text>
+          {/* Upcoming Matches */}
+          <SectionHeader title="ПРЕДСТОЯЩИЕ МАТЧИ" />
+          <View className="mb-4">
+            {mockUpcomingMatches.map((match) => (
+              <View key={match.id} className="bg-white rounded-lg p-4 mb-2 border border-gray-200">
+                <Text className="text-base text-text-primary">{match.time} – {match.format} {match.location}</Text>
               </View>
-              <View className="w-px bg-gray-300 mx-4" />
-              <View className="flex-1">
-                <Text className="text-sm text-text-secondary mb-1">{mockUser.weeksInRow} - недели подряд</Text>
-                <Text className="text-sm text-text-secondary mb-1">Активный режим</Text>
-                <Text className="text-sm text-text-secondary">Амплуа: {mockUser.role}</Text>
-              </View>
-            </View>
+            ))}
           </View>
-        </View>
-
-        {/* Upcoming Matches */}
-        <View className="mx-6 mb-6">
-          <Text className="text-lg font-bold text-text-primary mb-4">ПРЕДСТОЯЩИЕ МАТЧИ</Text>
-          {mockUpcomingMatches.map((match) => (
-            <View key={match.id} className="bg-white rounded-lg p-4 mb-2">
-              <Text className="text-base text-text-primary">{match.time} - {match.format} {match.location}</Text>
-            </View>
-          ))}
-        </View>
-
-        {/* Settings Links */}
-        <View className="mx-6 mb-6">
-          <TouchableOpacity 
-            className="bg-white rounded-lg p-4 mb-2 flex-row items-center justify-between"
-            onPress={() => navigation.navigate('PersonalData')}
-          >
-            <Text className="text-base text-text-primary">Личные данные</Text>
-            <MaterialCommunityIcons name="chevron-right" size={20} color="#757575" />
-          </TouchableOpacity>
-          <TouchableOpacity 
-            className="bg-white rounded-lg p-4 mb-2 flex-row items-center justify-between"
-            onPress={() => navigation.navigate('AboutUs')}
-          >
-            <Text className="text-base text-text-primary">О нас</Text>
-            <MaterialCommunityIcons name="chevron-right" size={20} color="#757575" />
-          </TouchableOpacity>
-        </View>
+        </Container>
       </ScrollView>
     </SafeAreaView>
   );
