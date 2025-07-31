@@ -4,12 +4,12 @@ import {
   Text,
   SafeAreaView,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
-import { Input } from '../components/common';
+import { Header } from '../components/common';
+import CameraSvg from '../../assets/images/profile/camera.svg';
 
 type PersonalDataScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -40,95 +40,86 @@ export const PersonalDataScreen: React.FC<Props> = ({ navigation }) => {
     navigation.goBack();
   };
 
-  const handleSignOut = () => {
-    Alert.alert(
-      'Выйти из аккаунта',
-      'Вы уверены, что хотите выйти?',
-      [
-        { text: 'Отмена', style: 'cancel' },
-        { 
-          text: 'Выйти', 
-          style: 'destructive',
-          onPress: () => {
-            // Clear any stored user data here
-            navigation.navigate('Onboarding');
-          }
-        }
-      ]
-    );
+  const handleAboutUs = () => {
+    navigation.navigate('AboutUs');
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background-default">
+    <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-6 py-4 border-b border-gray-200">
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color="#212121" />
-        </TouchableOpacity>
-        <Text className="text-lg font-bold text-text-primary">Личный данные</Text>
-        <View className="w-6" />
-      </View>
+      <Header
+        left={
+          <TouchableOpacity onPress={() => navigation.goBack()} className="p-2">
+            <MaterialCommunityIcons name="arrow-left" size={28} color="#212121" />
+          </TouchableOpacity>
+        }
+        title="ЛИЧНЫЕ ДАННЫЕ"
+      />
 
       <View className="flex-1 px-6 pt-6">
-        {/* Profile Picture */}
+        {/* Profile Picture - same as ProfileScreen */}
         <View className="items-center mb-8">
-          <View className="relative">
-            <View className="w-24 h-24 bg-gray-300 rounded-full items-center justify-center">
-              <MaterialCommunityIcons name="account" size={48} color="#757575" />
+          <View className="w-32 h-32 rounded-full bg-white items-center justify-center border-4 border-primary" style={{ elevation: 4 }}>
+            <View className="w-28 h-28 bg-gray-300 rounded-full items-center justify-center relative">
+              <MaterialCommunityIcons name="account" size={64} color="#757575" />
+              <TouchableOpacity className="absolute inset-0 items-center justify-center w-full h-full">
+                <CameraSvg width={38} height={38} />
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity className="absolute bottom-0 right-0 bg-primary rounded-full p-2">
-              <MaterialCommunityIcons name="camera" size={16} color="white" />
-            </TouchableOpacity>
           </View>
         </View>
 
-        {/* Form Fields */}
-        <View className="space-y-4">
-          <TouchableOpacity className="bg-white rounded-lg p-4 flex-row items-center justify-between">
-            <Text className="text-base text-text-primary">{formData.name}</Text>
-            <MaterialCommunityIcons name="chevron-right" size={20} color="#757575" />
-          </TouchableOpacity>
+        {/* Name Field - Separate */}
+        <TouchableOpacity className="bg-white rounded-lg p-4 flex-row items-center justify-between border border-gray-200 mb-4">
+          <Text className="text-base text-text-primary">{formData.name}</Text>
+          <MaterialCommunityIcons name="chevron-right" size={20} color="#757575" />
+        </TouchableOpacity>
 
-          <TouchableOpacity className="bg-white rounded-lg p-4 flex-row items-center justify-between">
-            <View>
-              <Text className="text-sm text-text-secondary mb-1">Номер телефона</Text>
-              <Text className="text-base text-text-primary">{formData.phone}</Text>
+        {/* Grouped Fields - Phone, City, About Me */}
+        <View className="bg-white rounded-lg border border-gray-200 mb-4">
+          <TouchableOpacity className="flex-row items-center justify-between p-4 border-b border-gray-100">
+            <Text className="text-base text-text-primary">Номер телефона</Text>
+            <View className="flex-row items-center">
+              <Text className="text-base text-gray-500 mr-2">{formData.phone}</Text>
+              <MaterialCommunityIcons name="chevron-right" size={20} color="#757575" />
             </View>
-            <MaterialCommunityIcons name="chevron-right" size={20} color="#757575" />
           </TouchableOpacity>
-
-          <TouchableOpacity className="bg-white rounded-lg p-4 flex-row items-center justify-between">
-            <View>
-              <Text className="text-sm text-text-secondary mb-1">Город</Text>
-              <Text className="text-base text-text-primary">{formData.city}</Text>
+          
+          <TouchableOpacity className="flex-row items-center justify-between p-4 border-b border-gray-100">
+            <Text className="text-base text-text-primary">Город</Text>
+            <View className="flex-row items-center">
+              <Text className="text-base text-gray-500 mr-2">{formData.city}</Text>
+              <MaterialCommunityIcons name="chevron-right" size={20} color="#757575" />
             </View>
-            <MaterialCommunityIcons name="chevron-right" size={20} color="#757575" />
           </TouchableOpacity>
-
-          <TouchableOpacity className="bg-white rounded-lg p-4 flex-row items-center justify-between">
-            <View>
-              <Text className="text-sm text-text-secondary mb-1">О себе</Text>
-              <Text className="text-base text-text-primary">{formData.about}</Text>
+          
+          <TouchableOpacity className="flex-row items-center justify-between p-4">
+            <Text className="text-base text-text-primary">О себе</Text>
+            <View className="flex-row items-center">
+              <Text className="text-base text-gray-500 mr-2">{formData.about}</Text>
+              <MaterialCommunityIcons name="chevron-right" size={20} color="#757575" />
             </View>
-            <MaterialCommunityIcons name="chevron-right" size={20} color="#757575" />
           </TouchableOpacity>
         </View>
 
-        {/* Save Button */}
+        {/* About Us Section */}
         <TouchableOpacity 
-          className="bg-primary rounded-lg py-4 mt-6"
-          onPress={handleSave}
+          className="bg-white rounded-lg p-4 flex-row items-center justify-between border border-gray-200"
+          onPress={handleAboutUs}
         >
-          <Text className="text-white text-center text-lg font-bold">Сохранить</Text>
+          <Text className="text-base text-text-primary">О НАС</Text>
+          <MaterialCommunityIcons name="chevron-right" size={20} color="#757575" />
         </TouchableOpacity>
 
-        {/* Sign Out Button */}
-        <TouchableOpacity 
-          className="bg-red-500 rounded-lg py-4 mt-4"
-          onPress={handleSignOut}
-        >
-          <Text className="text-white text-center text-lg font-bold">Выйти из аккаунта</Text>
-        </TouchableOpacity>
+        {/* Save Button - at the bottom */}
+        <View className="flex-1 justify-end pb-6">
+          <TouchableOpacity 
+            className="bg-primary rounded-lg py-4"
+            onPress={handleSave}
+          >
+            <Text className="text-white text-center text-lg font-bold">Сохранить</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );

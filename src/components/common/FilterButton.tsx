@@ -46,21 +46,27 @@ export const FilterButton: React.FC<FilterButtonProps> = ({
 
   return (
     <TouchableOpacity
-      className={`flex-1 rounded-lg p-2 items-center justify-center h-14 ${className}`}
+      className={`flex-1 rounded-lg p-2 items-center justify-center h-12 ${className}`}
       onPress={onPress}
       style={{ backgroundColor: bgColor, borderWidth: 1, borderColor }}
     >
-      {!hideIcon && icon && (
-        <MaterialCommunityIcons
-          name={icon as any}
-          size={16}
-          color={iconFinalColor}
-          style={{ marginBottom: 2 }}
-        />
-      )}
-      <Text style={{ color: textColor }} className="text-base font-bold">{text}</Text>
-      {subLabel !== undefined && (
-        <Text style={{ color: textColor }} className="text-sm">{subLabel}</Text>
+      {!hideIcon && icon ? (
+        <View className="flex-row items-center">
+          <MaterialCommunityIcons
+            name={icon as any}
+            size={16}
+            color={iconFinalColor}
+            style={{ marginRight: 4 }}
+          />
+          <Text style={{ color: textColor }} className="text-xs font-manrope-medium">{text}</Text>
+        </View>
+      ) : (
+        <>
+          <Text style={{ color: textColor }} className="text-xs font-manrope-medium">{text}</Text>
+          {subLabel !== undefined && (
+            <Text style={{ color: textColor }} className="text-sm">{subLabel}</Text>
+          )}
+        </>
       )}
     </TouchableOpacity>
   );

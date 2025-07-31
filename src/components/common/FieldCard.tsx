@@ -11,6 +11,7 @@ interface FieldCardProps {
   price?: string | number;
   ratingPosition?: 'next-to-name' | 'right';
   onPress?: () => void;
+  roundedBottom?: boolean;
 }
 
 export const FieldCard: React.FC<FieldCardProps> = ({
@@ -22,6 +23,7 @@ export const FieldCard: React.FC<FieldCardProps> = ({
   price,
   ratingPosition = 'right',
   onPress,
+  roundedBottom = false,
 }) => {
   const renderRating = () => (
     <View className="bg-primary rounded-md py-1 px-1">
@@ -36,7 +38,7 @@ export const FieldCard: React.FC<FieldCardProps> = ({
     <TouchableOpacity className="relative" onPress={onPress}>
       <Image
         source={image}
-        className="w-full h-56 rounded-t-lg"
+        className={`w-full h-56 ${roundedBottom ? 'rounded-lg' : 'rounded-t-lg'}`}
         resizeMode="cover"
       />
       <View className="absolute bottom-4 left-4">

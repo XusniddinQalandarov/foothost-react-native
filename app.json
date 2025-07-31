@@ -10,7 +10,7 @@
       "resizeMode": "contain"
     },
     "assetBundlePatterns": [
-      "**/*"
+      "assets/**/*"
     ],
     "ios": {
       "supportsTablet": true,
@@ -24,20 +24,11 @@
     },
     "web": {
       "bundler": "metro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6a91c883-97d6-4510-a8dd-d38d85adbddb"
+      }
     }
-    // If you need expo-build-properties, add it back with a valid version in package.json and here as a plugin.
-    // "plugins": [
-    //   [
-    //     "expo-build-properties",
-    //     {
-    //       "ios": {
-    //         "newArchEnabled": false
-    //       },
-    //       "android": {
-    //         "newArchEnabled": false
-    //       }
-    //     }
-    //   ]
-    // ]
   }
 }

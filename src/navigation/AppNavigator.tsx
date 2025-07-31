@@ -2,13 +2,14 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
-import { OnboardingScreen, RegisterScreen, LoginScreen } from '../screens';
+import { OnboardingScreen, RegisterScreen, LoginScreen, TournamentDetailsScreen } from '../screens';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { PersonalDataScreen } from '../screens/PersonalDataScreen';
 import { AboutUsScreen } from '../screens/AboutUsScreen';
 import { PhoneVerificationScreen } from '../screens/PhoneVerificationScreen';
 import { BookingStep1Screen } from '../screens/BookingStep1Screen';
 import { BookingStep3Screen } from '../screens/BookingStep3Screen';
+import { MatchRatingScreen } from '../screens/MatchRatingScreen';
 import { MainTabNavigator } from './MainTabNavigator';
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -33,7 +34,17 @@ export const AppNavigator: React.FC = () => {
         <Stack.Screen name="AboutUs" component={AboutUsScreen} />
         <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen} />
         <Stack.Screen name="BookingStep1" component={BookingStep1Screen} />
-        <Stack.Screen name="BookingStep3" component={BookingStep3Screen} options={{ presentation: 'transparentModal', headerShown: false }} />
+        <Stack.Screen name="TournamentDetails" component={TournamentDetailsScreen} />
+        <Stack.Screen 
+          name="BookingStep3" 
+          component={BookingStep3Screen} 
+          options={{ 
+            presentation: 'modal', 
+            headerShown: false,
+            gestureEnabled: true
+          }} 
+        />
+        <Stack.Screen name="MatchRating" component={MatchRatingScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

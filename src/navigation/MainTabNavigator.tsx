@@ -43,7 +43,9 @@ export const MainTabNavigator: React.FC<MainTabNavigatorProps> = ({ navigation }
       <Tab.Screen name="StadiumList">
         {(props) => <StadiumListScreen {...props} rootNavigation={navigation} />}
       </Tab.Screen>
-      <Tab.Screen name="Tournaments" component={TournamentsScreen} />
+      <Tab.Screen name="Tournaments">
+        {(props) => <TournamentsScreen {...props} />}
+      </Tab.Screen>
       <Tab.Screen name="Profile">
         {(props) => <ProfileScreen {...props} />}
       </Tab.Screen>

@@ -13,7 +13,7 @@ import TimeOfWorkSvg from '../../assets/images/booking/timeofWork.svg';
 import LengthOfFieldSvg from '../../assets/images/booking/lengthofField.svg';
 import TypeOfFieldSvg from '../../assets/images/booking/typeofField.svg';
 import TypeOfPitchSvg from '../../assets/images/booking/typeofPitch.svg';
-import { Container } from '../components/common';
+import { Container, Header } from '../components/common';
 
 type BookingStep1ScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -105,6 +105,7 @@ const AmenityItem = ({ icon, label, available }: { icon: React.ReactNode, label:
 export const BookingStep1Screen: React.FC<Props> = ({ navigation }) => {
   const [selectedDate, setSelectedDate] = useState('today');
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // When selectedDate changes, select the first available slot
   React.useEffect(() => {
@@ -113,7 +114,20 @@ export const BookingStep1Screen: React.FC<Props> = ({ navigation }) => {
   }, [selectedDate]);
 
   const handleSubmit = () => {
-    navigation.navigate('BookingStep3');
+    // Prevent multiple rapid presses
+    if (!selectedTimeSlot || isSubmitting) return;
+    
+    setIsSubmitting(true);
+    
+    // Simple, reliable navigation
+    try {
+      navigation.navigate('BookingStep3');
+    } catch (error) {
+      console.error('Navigation error:', error);
+    }
+    
+    // Reset submission state after a delay
+    setTimeout(() => setIsSubmitting(false), 3000);
   };
 
   const handleTimeSlotPress = (slot: any) => {
@@ -126,16 +140,20 @@ export const BookingStep1Screen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+      <Header
+        left={
+          <TouchableOpacity onPress={() => navigation.goBack()} className="p-2">
+            <MaterialCommunityIcons name="arrow-left" size={28} color="#212121" />
+          </TouchableOpacity>
+        }
+        right={
+          <TouchableOpacity>
+            <MaterialCommunityIcons name="dots-vertical" size={28} color="#212121" />
+          </TouchableOpacity>
+        }
+      />
+      
       <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
-        {/* Header is outside ScrollView, but for simplicity it's represented by this padding */}
-        <View className="h-12 flex-row justify-between items-center px-4">
-             <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Text className="text-black text-2xl">←</Text>
-             </TouchableOpacity>
-             <TouchableOpacity>
-                <Text className="text-black text-2xl font-bold -mt-2">...</Text>
-             </TouchableOpacity>
-        </View>
         
         {/* Image Carousel */}
         <View className="relative">
@@ -258,12 +276,15 @@ export const BookingStep1Screen: React.FC<Props> = ({ navigation }) => {
       <View className="absolute bottom-0 left-0 right-0 px-4 pt-2 pb-6">
         <TouchableOpacity
           className={`rounded-xl py-4 items-center ${
-            selectedTimeSlot ? 'bg-primary' : 'bg-gray-300'
+            selectedTimeSlot && !isSubmitting ? 'bg-primary' : 'bg-gray-300'
           }`}
           onPress={handleSubmit}
-          disabled={!selectedTimeSlot}
+          disabled={!selectedTimeSlot || isSubmitting}
+          activeOpacity={0.7}
         >
-          <Text className="text-white font-manrope-bold text-md">Отправить заявку</Text>
+          <Text className="text-white font-manrope-bold text-md">
+            {isSubmitting ? 'Отправка...' : 'Отправить заявку'}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

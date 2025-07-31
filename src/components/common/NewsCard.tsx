@@ -18,13 +18,13 @@ export const NewsCard: React.FC<NewsCardProps> = ({
     <TouchableOpacity 
       className={`rounded-lg overflow-hidden relative ${className}`}
       onPress={onPress}
+      style={{ width: '100%' }}
     >
-      <View className="w-full h-40 rounded-lg" style={{ flex: 1 }}>
+      <View className="w-full h-40 rounded-lg">
         {React.cloneElement(image as React.ReactElement, {
           style: { 
             width: '100%', 
             height: '100%', 
-            flex: 1,
             borderRadius: 8
           }
         })}

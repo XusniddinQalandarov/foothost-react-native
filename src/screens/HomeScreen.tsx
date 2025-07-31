@@ -46,14 +46,13 @@ export const HomeScreen: React.FC = () => {
     <SafeAreaView className="flex-1 bg-white">
       {/* Top Bar */}
       <Header
-        left={<Logo width={100} height={40} />}
-        right={<TouchableOpacity><Bell width={24} height={24} /></TouchableOpacity>}
-      >
-      </Header>
+        left={<Logo width={100} height={40} style={{ marginTop: 16 }} />}
+        right={<TouchableOpacity><Bell width={24} height={24} style={{ marginTop: 16 }} /></TouchableOpacity>}
+      />
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Search and Filter Section */}
-        <Container padding="md">
+        <Container padding="sm">
           <SearchBar 
             value={searchValue}
             onChangeText={setSearchValue}
@@ -109,7 +108,7 @@ export const HomeScreen: React.FC = () => {
         </Container>
 
         {/* Popular Fields Section */}
-        <Container padding="md">
+        <Container padding="sm">
           <SectionHeader 
             title="ПОПУЛЯРНЫЕ ПОЛЯ"
             onViewAll={() => console.log('View all fields')}
@@ -122,6 +121,7 @@ export const HomeScreen: React.FC = () => {
             distance="4.9 км от вас"
             image={require('../../assets/images/homepage/homepage.png')}
             onPress={() => console.log('Field pressed')}
+            roundedBottom={true}
           />
 
           {/* Pagination Dots */}
@@ -135,53 +135,64 @@ export const HomeScreen: React.FC = () => {
         </Container>
 
         {/* News Section */}
-        <Container padding="md" className="mb-2 w-full">
+        <Container padding="sm" className="mb-2 w-full">
           <SectionHeader 
             title="NEWS"
             onViewAll={() => console.log('View all news')}
           />
 
-          {/* Two smaller horizontal cards */}
-          <View className="flex-row space-x-8 mb-4">
-            <NewsCard
-              title="Gamemag.ru - Состоялся релиз футбольного..."
-              image={<News1Svg width="100%" height="100%" style={{ flex: 1 }} />}
-              onPress={() => console.log('News 1 pressed')}
-              className="flex-1"
-            />
-            <NewsCard
-              title="Yamal helps Barcelona seal La Liga title at rivals"
-              image={<News2Svg width="100%" height="100%"/>}
-              onPress={() => console.log('News 2 pressed')}
-              className="flex-1"
-            />
-          </View>
-
-          {/* One large full-width card */}
-          <View className="relative">
-            <View className="w-full h-64 rounded-lg overflow-hidden">
-              <BestFieldSvg width="100%" height="100%" />
+          {/* News Grid */}
+          <View className="w-full mb-4">
+            {/* First Row - 2 items */}
+            <View className="w-full flex-row mb-2">
+              <TouchableOpacity className="w-1/2 pr-1" onPress={() => console.log('News 1 pressed')}>
+                <View className="w-full h-40 rounded-lg overflow-hidden">
+                  <News1Svg width="100%" height="100%" />
+                </View>
+                <View className="absolute bottom-2 left-5 right-2 z-20">
+                  <Text className="text-white font-manrope-medium text-xs leading-4">
+                    Gamemag.ru - Состоялся релиз футбольного...
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity className="w-1/2 pl-1" onPress={() => console.log('News 2 pressed')}>
+                <View className="w-full h-40 rounded-lg overflow-hidden">
+                  <News2Svg width="100%" height="100%" />
+                </View>
+                <View className="absolute bottom-2 left-5 right-2 z-20">
+                  <Text className="text-white font-manrope-medium text-xs leading-4">
+                    Yamal helps Barcelona seal La Liga title at rivals
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </View>
-            <View className="absolute top-4 left-4">
-              <Text className="text-white text-xl font-artico mb-1">
-                ЛУЧШИЕ ФУТБОЛЬНЫЕ ПОЛЯ В ТАШКЕНТЕ
-              </Text>
-              <Text className="text-white text-sm">Debits - 03 June 2023</Text>
-            </View>
-            <TouchableOpacity className="absolute bottom-4 right-4 bg-gray-800 rounded-lg px-4 py-2">
-              <Text className="text-white font-semibold">Читать</Text>
+            
+            {/* Second Row - 1 item */}
+            <TouchableOpacity className="w-full" onPress={() => console.log('Large news pressed')}>
+              <View className="w-full h-64 rounded-lg overflow-hidden">
+                <BestFieldSvg width="100%" height="100%" />
+              </View>
+              <View className="absolute top-4 left-4">
+                <Text className="text-white text-[28px] font-artico-bold mb-1">
+                  ЛУЧШИЕ ФУТБОЛЬНЫЕ ПОЛЯ В ТАШКЕНТЕ
+                </Text>
+                <Text className="text-white font-manrope-medium text-sm">Debits - 03 June 2023</Text>
+              </View>
+              <View className="absolute bottom-4 right-4 border border-white rounded-lg px-6 py-2">
+                <Text className="text-white font-manrope-medium">Читать</Text>
+              </View>
             </TouchableOpacity>
           </View>
         </Container>
 
         {/* Clans Section */}
-        <Container padding="md">
+        <Container padding="sm">
           <SectionHeader 
             title="CLANS"
             onViewAll={() => console.log('View all clans')}
           />
 
-          <View className="space-y-3">
+          <View className="space-y-3 px-3">
             {mockClans.map((clan) => (
               <ClanCard
                 key={clan.id}
@@ -197,8 +208,8 @@ export const HomeScreen: React.FC = () => {
         </Container>
 
         {/* Ready to Play Section */}
-        <Container padding="md" className="mb-4">
-          <View className="flex-row items-center justify-between bg-[#EEEDED] px-6 py-4 rounded-lg">
+        <Container padding="sm" className="mb-4">
+          <View className="flex-row items-center justify-between bg-[#EEEDED] p-6 rounded-lg">
             <View className="flex-1">
               <MaskedView
                 style={{ flexDirection: 'row', alignSelf: 'flex-start' }}
@@ -207,9 +218,8 @@ export const HomeScreen: React.FC = () => {
                     style={{
                       fontSize: 40,
                       fontFamily: 'Artico-Bold',
-                      fontWeight: 'bold',
-                      lineHeight: 48,
-                      letterSpacing: 0.5,
+                      lineHeight: 37,
+                      letterSpacing: 0.1,
                       color: 'black',
                     }}
                   >
@@ -232,17 +242,17 @@ export const HomeScreen: React.FC = () => {
                     style={{
                       opacity: 0,
                       fontSize: 40,
-                      fontFamily: 'Artico-Bold',
+                      fontFamily: 'Artico',
                       fontWeight: 'bold',
-                      lineHeight: 48,
-                      letterSpacing: 0.5,
+                      lineHeight: 37,
+                      letterSpacing: 0.1,
                     }}
                   >
                     ГОТОВ К{"\n"}ИГРЕ?
                   </Text>
                 </LinearGradient>
               </MaskedView>
-              <TouchableOpacity className="mt-6 border-2 border-primary rounded-lg px-6 py-3 self-start">
+              <TouchableOpacity className="mt-2 border-2 border-primary rounded-lg px-6 py-3 self-start">
                 <Text className="text-primary font-manrope-medium">Создать Матч</Text>
               </TouchableOpacity>
             </View>

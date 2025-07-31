@@ -8,6 +8,7 @@ import {
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
+import { Header } from '../components/common';
 
 type AboutUsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -41,51 +42,59 @@ export const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background-default">
+    <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-6 py-4 border-b border-gray-200">
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color="#212121" />
-        </TouchableOpacity>
-        <Text className="text-lg font-bold text-text-primary">О НАС</Text>
-        <View className="w-6" />
-      </View>
+      <Header
+        left={
+          <TouchableOpacity onPress={() => navigation.goBack()} className="p-2">
+            <MaterialCommunityIcons name="arrow-left" size={28} color="#212121" />
+          </TouchableOpacity>
+        }
+        title="О НАС"
+      />
 
       <View className="flex-1 px-6 pt-6">
-        {/* About Links */}
-        <View className="space-y-4">
-          {aboutLinks.map((link) => (
-            <TouchableOpacity 
-              key={link.id}
-              className="bg-white rounded-lg p-4 flex-row items-center justify-between"
-              onPress={() => handleLinkPress(link.id)}
-            >
-              <View className="flex-row items-center">
-                <MaterialCommunityIcons 
-                  name={link.icon as any} 
-                  size={20} 
-                  color="#757575" 
-                  className="mr-3"
-                />
-                <Text className="text-base text-text-primary">{link.title}</Text>
-              </View>
-              <MaterialCommunityIcons name="chevron-right" size={20} color="#757575" />
-            </TouchableOpacity>
-          ))}
+        {/* Grouped Fields Block */}
+        <View className="bg-white rounded-lg border border-gray-200 mb-4">
+          <TouchableOpacity 
+            className="flex-row items-center justify-between p-4 border-b border-gray-100"
+            onPress={() => handleLinkPress(1)}
+          >
+            <Text className="text-base text-text-primary">Contract offer</Text>
+            <MaterialCommunityIcons name="chevron-right" size={20} color="#757575" />
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            className="flex-row items-center justify-between p-4 border-b border-gray-100"
+            onPress={() => handleLinkPress(2)}
+          >
+            <Text className="text-base text-text-primary">Privacy policy</Text>
+            <MaterialCommunityIcons name="chevron-right" size={20} color="#757575" />
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            className="flex-row items-center justify-between p-4"
+            onPress={() => handleLinkPress(3)}
+          >
+            <Text className="text-base text-text-primary">Connect with us</Text>
+            <MaterialCommunityIcons name="chevron-right" size={20} color="#757575" />
+          </TouchableOpacity>
         </View>
 
-        {/* App Info */}
-        <View className="mt-8 bg-white rounded-lg p-6">
-          <Text className="text-lg font-bold text-text-primary mb-4">FOOT HOST</Text>
-          <Text className="text-sm text-text-secondary mb-2">
-            Версия приложения: 1.0.0
-          </Text>
-          <Text className="text-sm text-text-secondary mb-2">
-            © 2024 Foot Host. Все права защищены.
-          </Text>
-          <Text className="text-sm text-text-secondary">
-            Приложение для поиска и бронирования футбольных полей в Ташкенте.
-          </Text>
+        {/* Copyright Text - at the bottom */}
+        <View className="flex-1 justify-end pb-6">
+          <View className="bg-white rounded-lg p-6 border border-gray-200">
+            <Text className="text-lg font-bold text-text-primary mb-4">FOOT HOST</Text>
+            <Text className="text-sm text-text-secondary mb-2">
+              Версия приложения: 1.0.0
+            </Text>
+            <Text className="text-sm text-text-secondary mb-2">
+              © 2024 Foot Host. Все права защищены.
+            </Text>
+            <Text className="text-sm text-text-secondary">
+              Приложение для поиска и бронирования футбольных полей в Ташкенте.
+            </Text>
+          </View>
         </View>
       </View>
     </SafeAreaView>

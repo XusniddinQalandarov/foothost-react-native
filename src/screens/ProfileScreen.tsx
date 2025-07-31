@@ -1,105 +1,329 @@
-import React from 'react';
-import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Header, Container, Button, SectionHeader } from '../components/common';
-import { ClanCard } from '../components/common/ClanCard';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../types/navigation';
+import { Header, Container, MatchCard } from '../components/common';
 import LogoWhite from '../../assets/images/logo_white.svg';
-import MockClansSvg from '../../assets/images/homepage/mockClans.svg';
+import CameraSvg from '../../assets/images/profile/camera.svg';
+import ChelseaSvg from '../../assets/images/profile/chelsea.svg';
+import MyuSvg from '../../assets/images/profile/MYU.svg';
+
+type ProfileScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'Profile'
+>;
+
+interface Props {
+  navigation: ProfileScreenNavigationProp;
+}
+
+interface Team {
+  name: string;
+  logo?: any;
+}
 
 const mockUser = {
   name: 'ШУКУР ГАЙНУТДИНОВ',
-  level: 'Полупрофи',
-  rating: 2900,
-  tournaments: 7,
-  wins: 3,
-  matchesPlayed: 58,
-  weeksInRow: 3,
-  role: 'Вратарь / Полузащитник',
-  clan: {
-    id: 1,
-    name: 'Paxtakor',
-    wins: 37,
-    losses: 8,
-    score: 1886,
-    rank: 1,
-  },
 };
 
 const mockUpcomingMatches = [
-  { id: 1, time: 'Сегодня, 19:00', format: '10x10', location: '@Bunyodkor' },
-  { id: 2, time: 'Завтра, 20:00', format: '7x7', location: '@Jar' },
+  {
+    id: '1',
+    location: 'Малая кольцевая...',
+    dateTime: '24.12.2025 - 18:00',
+    teams: [
+      { name: 'CHELSEA', logo: <ChelseaSvg width={64} height={64} /> },
+      { name: 'MAN UTD', logo: <MyuSvg width={64} height={64} /> }
+    ] as [Team, Team],
+    title: 'Weekend Battle',
+    stadiumName: 'Chilonzor Stadium',
+    cost: 'Стоимость: 200 000 с команды',
+    participants: '10/12',
+    image: undefined,
+    onPress: () => console.log('Match 1 pressed')
+  },
+  {
+    id: '2',
+    location: 'Малая кольцевая...',
+    dateTime: '24.12.2025 - 18:00',
+    teams: [
+      { name: 'CHELSEA', logo: <ChelseaSvg width={64} height={64} /> },
+      { name: 'MAN UTD', logo: <MyuSvg width={64} height={64} /> }
+    ] as [Team, Team],
+    title: 'Weekend Battle',
+    stadiumName: 'Chilonzor Stadium',
+    cost: 'Стоимость: 200 000 с команды',
+    participants: '10/12',
+    image: require('../../assets/images/stadium/stadium.png'),
+    onPress: () => console.log('Match 2 pressed')
+  },
+  {
+    id: '3',
+    location: 'Малая кольцевая...',
+    dateTime: '24.12.2025 - 18:00',
+    teams: [
+      { name: 'CHELSEA', logo: <ChelseaSvg width={64} height={64} /> },
+      { name: 'MAN UTD', logo: <MyuSvg width={64} height={64} /> }
+    ] as [Team, Team],
+    title: 'Weekend Battle',
+    stadiumName: 'Chilonzor Stadium',
+    cost: 'Стоимость: 200 000 с команды',
+    participants: '10/12',
+    image: undefined,
+    onPress: () => console.log('Match 3 pressed')
+  }
 ];
 
-export const ProfileScreen: React.FC = () => {
+const mockPastMatches = [
+  {
+    id: '1',
+    location: 'Малая кольцевая...',
+    dateTime: '20.12.2025 - 18:00',
+    teams: [
+      { name: 'ARSENAL', logo: null },
+      { name: 'LIVERPOOL', logo: null }
+    ] as [Team, Team],
+    title: 'Weekend Battle',
+    stadiumName: 'Chilonzor Stadium',
+    cost: 'Стоимость: 200 000 с команды',
+    participants: '12/12',
+    image: undefined,
+    onPress: () => console.log('Past Match 1 pressed')
+  },
+  {
+    id: '2',
+    location: 'Малая кольцевая...',
+    dateTime: '15.12.2025 - 18:00',
+    teams: [
+      { name: 'MAN CITY', logo: null },
+      { name: 'TOTTENHAM', logo: null }
+    ] as [Team, Team],
+    title: 'Weekend Battle',
+    stadiumName: 'Chilonzor Stadium',
+    cost: 'Стоимость: 200 000 с команды',
+    participants: '12/12',
+    image: undefined,
+    onPress: () => console.log('Past Match 2 pressed')
+  }
+];
+
+export const ProfileScreen: React.FC<Props> = ({ navigation }) => {
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [activeTab, setActiveTab] = useState<'upcoming' | 'history'>('upcoming');
+
+  const handlePersonalDetails = () => {
+    setShowDropdown(false);
+    navigation.navigate('PersonalData');
+  };
+
+  const handleAboutUs = () => {
+    setShowDropdown(false);
+    navigation.navigate('AboutUs');
+  };
+
+  const handleLogOut = () => {
+    setShowDropdown(false);
+    Alert.alert(
+      'Выйти из аккаунта',
+      'Вы уверены, что хотите выйти?',
+      [
+        { text: 'Отмена', style: 'cancel' },
+        { 
+          text: 'Выйти', 
+          style: 'destructive',
+          onPress: () => {
+            // Clear any stored user data here
+            navigation.navigate('Onboarding');
+          }
+        }
+      ]
+    );
+  };
+
+  const handleViewMatch = (matchId: string) => {
+    console.log('View match:', matchId);
+    // Navigate to match details or booking
+  };
+
+  const handlePastMatchPress = (match: any) => {
+    navigation.navigate('MatchRating', {
+      matchId: match.id,
+      teams: [match.teams[0].name, match.teams[1].name],
+      eventName: match.title,
+      date: match.dateTime,
+      fieldName: match.stadiumName,
+    });
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
-      {/* Green Header - taller for profile picture overlap */}
+      {/* Backdrop for dropdown */}
+      {showDropdown && (
+        <TouchableOpacity 
+          className="absolute inset-0 z-40"
+          onPress={() => setShowDropdown(false)}
+          activeOpacity={1}
+        />
+      )}
+      
+      {/* Green Header */}
       <View className="bg-primary" style={{ height: 160, position: 'relative' }}>
         <Header
           left={<LogoWhite width={100} height={40} style={{ marginTop: 16 }} />}
-          title={undefined}
-          right={<TouchableOpacity><MaterialCommunityIcons name="dots-vertical" size={28} color="#fff" /></TouchableOpacity>}
-          style={{ backgroundColor: 'transparent', paddingTop: 32, paddingBottom: 0 }}
+          right={
+            <View className="relative">
+              <TouchableOpacity onPress={() => setShowDropdown(!showDropdown)}>
+                <MaterialCommunityIcons name="dots-vertical" size={28} color="#fff" style={{ marginTop: 16 }} />
+              </TouchableOpacity>
+              {showDropdown && (
+                <View className="absolute top-10 -right-5 bg-white rounded-lg shadow-lg border border-gray-200 z-50 w-44">
+                  <TouchableOpacity 
+                    className="flex-row items-center px-4 py-3 border-b border-gray-100"
+                    onPress={handlePersonalDetails}
+                  >
+                    <MaterialCommunityIcons name="account" size={20} color="#666" />
+                    <Text className="ml-3 text-text-primary font-manrope-medium">Личные данные</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    className="flex-row items-center px-4 py-3 border-b border-gray-100"
+                    onPress={handleAboutUs}
+                  >
+                    <MaterialCommunityIcons name="information-outline" size={20} color="#666" />
+                    <Text className="ml-3 text-text-primary font-manrope-medium">О НАС</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    className="flex-row items-center px-4 py-3"
+                    onPress={handleLogOut}
+                  >
+                    <MaterialCommunityIcons name="logout" size={20} color="#ef4444" />
+                    <Text className="ml-3 text-red-500 font-manrope-medium">Выйти</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          }
+          style={{ backgroundColor: 'transparent' }}
         />
+        
         {/* Profile Picture - absolute, overlaps green and white */}
         <View style={{ position: 'absolute', left: 0, right: 0, bottom: -64, alignItems: 'center', zIndex: 10 }}>
           <View className="w-32 h-32 rounded-full bg-white items-center justify-center border-4 border-primary" style={{ elevation: 4 }}>
-            <View className="w-28 h-28 bg-gray-300 rounded-full items-center justify-center">
+            <View className="w-28 h-28 bg-gray-300 rounded-full items-center justify-center relative">
               <MaterialCommunityIcons name="account" size={64} color="#757575" />
               <TouchableOpacity className="absolute inset-0 items-center justify-center w-full h-full">
-                <MaterialCommunityIcons name="camera" size={38} color="white" />
+                <CameraSvg width={38} height={38} />
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </View>
+
       <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 72 }}>
         <Container padding="sm">
-          {/* Name and Level */}
-          <View className="items-center mt-2 mb-2">
-            <Text className="text-2xl font-artico-bold text-text-primary text-center">{mockUser.name} <MaterialCommunityIcons name="soccer" size={22} color="#FFD700" /></Text>
-            <View className="flex-row items-center mt-1">
-              <MaterialCommunityIcons name="trophy" size={18} color="#FFD700" />
-              <Text className="ml-2 text-base font-manrope-bold text-text-secondary">{mockUser.level}</Text>
-            </View>
+          {/* Name and Soccer Ball */}
+          <View className="items-center mt-2 mb-6">
+            <Text className="text-[28px] font-artico-bold text-text-primary text-center">
+              {mockUser.name} <MaterialCommunityIcons name="soccer" size={28} color="#FFD700" />
+            </Text>
           </View>
-          {/* Clan Info */}
-          {mockUser.clan && (
-            <View className="items-center mb-4">
-              <ClanCard
-                rank={mockUser.clan.rank}
-                name={mockUser.clan.name}
-                wins={mockUser.clan.wins}
-                losses={mockUser.clan.losses}
-                score={mockUser.clan.score}
-                logo={<MockClansSvg width={34} height={42} />}
-              />
-            </View>
-          )}
-          {/* Player Statistics */}
-          <SectionHeader title="СТАТИСТИКА ИГРОКА" />
-          <View className="bg-white rounded-lg p-4 mb-4 flex-row justify-between items-center border border-gray-200">
-            <View className="flex-1">
-              <Text className="text-sm text-text-secondary mb-1">Рейтинг: <Text className="font-manrope-bold text-text-primary">{mockUser.rating}</Text> очков</Text>
-              <Text className="text-sm text-text-secondary mb-1">Турниры: <Text className="font-manrope-bold text-text-primary">{mockUser.tournaments}</Text> участия</Text>
-              <Text className="text-sm text-text-secondary mb-1">Победы: <Text className="font-manrope-bold text-text-primary">{mockUser.wins}</Text> турнира</Text>
-              <Text className="text-sm text-text-secondary">Матчи сыграно: <Text className="font-manrope-bold text-text-primary">{mockUser.matchesPlayed}</Text></Text>
-            </View>
-            <View className="w-px bg-gray-300 mx-4 self-stretch" />
-            <View className="flex-1">
-              <Text className="text-sm text-text-secondary mb-1"><Text className="font-manrope-bold text-text-primary">{mockUser.weeksInRow}</Text> - недели подряд</Text>
-              <Text className="text-sm text-text-secondary mb-1">Активный режим</Text>
-              <Text className="text-sm text-text-secondary">Амплуа: <Text className="font-manrope-bold text-text-primary">{mockUser.role}</Text></Text>
-            </View>
+
+          {/* Navigation Tabs */}
+          <View className="flex-row mb-6">
+            <TouchableOpacity 
+              className={`flex-1 py-3 ${activeTab === 'upcoming' ? 'border-b-2 border-primary' : ''}`}
+              onPress={() => setActiveTab('upcoming')}
+            >
+              <Text className={`text-center font-manrope-medium text-xs ${activeTab === 'upcoming' ? 'text-primary' : 'text-[#150000]'}`}>
+                Предстоящие матчи
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              className={`flex-1 py-3 ${activeTab === 'history' ? 'border-b-2 border-primary' : ''}`}
+              onPress={() => setActiveTab('history')}
+            >
+              <Text className={`text-center font-manrope-medium text-xs ${activeTab === 'history' ? 'text-primary' : 'text-[#150000]'}`}>
+                История матчей / турниров
+              </Text>
+            </TouchableOpacity>
           </View>
-          {/* Upcoming Matches */}
-          <SectionHeader title="ПРЕДСТОЯЩИЕ МАТЧИ" />
+
+          {/* Match Cards */}
           <View className="mb-4">
-            {mockUpcomingMatches.map((match) => (
-              <View key={match.id} className="bg-white rounded-lg p-4 mb-2 border border-gray-200">
-                <Text className="text-base text-text-primary">{match.time} – {match.format} {match.location}</Text>
-              </View>
-            ))}
+            {activeTab === 'upcoming' ? (
+              mockUpcomingMatches.map((match) => (
+                <View key={match.id} className="mb-4">
+                  <View className="rounded-xl overflow-hidden shadow-lg bg-white">
+                    <MatchCard
+                      id={match.id}
+                      location={match.location}
+                      dateTime={match.dateTime}
+                      teams={match.teams}
+                      title={match.title}
+                      stadiumName={match.stadiumName}
+                      cost={match.cost}
+                      participants={match.participants}
+                      image={match.image}
+                      onPress={match.onPress}
+                    />
+                    <TouchableOpacity 
+                      className="bg-primary py-3 px-4"
+                      onPress={() => handleViewMatch(match.id)}
+                      style={{ marginTop: 0 }}
+                    >
+                      <View className="flex-row justify-between items-center">
+                        <View className="flex-1">
+                          <Text className="text-white font-manrope-bold text-sm mb-1">{match.title}</Text>
+                          <Text className="text-white font-manrope-medium text-xs">{match.cost}</Text>
+                        </View>
+                        <View className="flex-row items-center">
+                          <MaterialCommunityIcons name="account-group" size={16} color="white" />
+                          <Text className="text-white font-manrope-medium text-xs ml-1">{match.participants}</Text>
+                          <MaterialCommunityIcons name="chevron-right" size={20} color="white" className="ml-2" />
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))
+            ) : (
+              mockPastMatches.map((match) => (
+                <View key={match.id} className="mb-4">
+                  <View className="rounded-xl overflow-hidden shadow-lg bg-white">
+                    <MatchCard
+                      id={match.id}
+                      location={match.location}
+                      dateTime={match.dateTime}
+                      teams={match.teams}
+                      title={match.title}
+                      stadiumName={match.stadiumName}
+                      cost={match.cost}
+                      participants={match.participants}
+                      image={match.image}
+                      isPastMatch={true}
+                      onPress={() => handlePastMatchPress(match)}
+                    />
+                    <TouchableOpacity 
+                      className="py-3 px-4"
+                      style={{ backgroundColor: '#1E1E1E', marginTop: 0 }}
+                      onPress={() => handlePastMatchPress(match)}
+                    >
+                      <View className="flex-row justify-between items-center">
+                        <View className="flex-1">
+                          <Text className="text-white font-manrope-bold text-sm mb-1">{match.title}</Text>
+                          <Text className="text-white font-manrope-medium text-xs">{match.cost}</Text>
+                        </View>
+                        <View className="flex-row items-center">
+                          <MaterialCommunityIcons name="account-group" size={16} color="white" />
+                          <Text className="text-white font-manrope-medium text-xs ml-1">{match.participants}</Text>
+                          <MaterialCommunityIcons name="chevron-right" size={20} color="white" className="ml-2" />
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))
+            )}
           </View>
         </Container>
       </ScrollView>

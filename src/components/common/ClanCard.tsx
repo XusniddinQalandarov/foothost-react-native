@@ -41,22 +41,24 @@ export const ClanCard: React.FC<ClanCardProps> = ({
       <View className="w-12 h-12 mr-4 items-center justify-center">
         {getRankBadge(rank)}
       </View>
-      <View className="flex-row items-center py-2 px-4 rounded-md bg-[#EEEDED]" style={{ width: 260 }}>
-        {logo}
-        <View className="flex-1 ml-2">
-          <Text className="text-[15px] font-manrope-bold text-text-primary mb-1">{name}</Text>
-          <View className="flex-column items-start">
-            <Text className="text-xs font-manrope-regular text-text-secondary">
-              победа - {wins}
-            </Text>
-            <Text className="text-xs font-manrope-regular text-text-secondary">
-              поражение - {losses}
-            </Text>
+      <View className="flex-row items-center py-2 rounded-md bg-[#EEEDED] w-[81%] justify-center">
+        <View className="flex-row items-center w-[260px]">
+          {logo}
+          <View className="flex-1 ml-2">
+            <Text className="text-[15px] font-manrope-bold text-text-primary mb-1">{name}</Text>
+            <View className="flex-column items-start">
+              <Text className="text-xs font-manrope-regular text-text-secondary">
+                победа - {wins}
+              </Text>
+              <Text className="text-xs font-manrope-regular text-text-secondary">
+                поражение - {losses}
+              </Text>
+            </View>
           </View>
-        </View>
-        <View className="flex-row items-center gap-1">
-          <Text className="text-[15px] font-manrope-bold text-text-primary">{score}</Text>
-          <MaterialCommunityIcons name="trophy" size={15} color="#000000" />
+          <View className="flex-row items-center gap-1">
+            <Text className="text-[15px] font-manrope-bold text-text-primary">{score}</Text>
+            <MaterialCommunityIcons name="trophy" size={15} color="#000000" />
+          </View>
         </View>
       </View>
     </View>

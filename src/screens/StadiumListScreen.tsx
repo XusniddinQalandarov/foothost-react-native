@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
 import { FieldCard, Container, Header, FilterButton } from '../components/common';
@@ -47,9 +48,17 @@ export const StadiumListScreen: React.FC<Props> = ({ navigation, rootNavigation 
     <SafeAreaView className="flex-1 bg-white">
       {/* Header Layout */}
       <Header
-        left={<TouchableOpacity><Text>{'< Back'}</Text></TouchableOpacity>}
+        left={
+          <TouchableOpacity onPress={() => navigation.goBack()} className="p-2">
+            <MaterialCommunityIcons name="arrow-left" size={28} color="#212121" />
+          </TouchableOpacity>
+        }
         title="СПИСОК ПОЛЕЙ"
-        right={<TouchableOpacity><Text>...</Text></TouchableOpacity>}
+        right={
+          <TouchableOpacity>
+            <MaterialCommunityIcons name="dots-vertical" size={28} color="#212121" />
+          </TouchableOpacity>
+        }
       />
 
       {/* Stadium count subtext */}
@@ -57,30 +66,32 @@ export const StadiumListScreen: React.FC<Props> = ({ navigation, rootNavigation 
         <Text className="text-gray-600 font-manrope-medium text-xs">121 стадион</Text>
       </View>
 
-      <View className="flex-row space-x-3 p-2 bg-white">
-        {mockDates.map((date) => (
-          <FilterButton
-            key={date.value}
-            text={date.label}
-            subLabel={date.day}
-            isActive={selectedDate === date.value}
-            hideIcon
-            onPress={() => setSelectedDate(date.value)}
-            activeColor="#45AF31"
-            inactiveColor="#fff"
-            activeTextColor="#fff"
-            inactiveTextColor="#212121"
-            activeBorderColor="#45AF31"
-            inactiveBorderColor="#E0E0E0"
-            className="mr-2"
-          />
-        ))}
-      </View>
+      <Container padding="sm">
+        <View className="flex-row space-x-3">
+          {mockDates.map((date) => (
+            <FilterButton
+              key={date.value}
+              text={date.label}
+              subLabel={date.day}
+              isActive={selectedDate === date.value}
+              hideIcon
+              onPress={() => setSelectedDate(date.value)}
+              activeColor="#45AF31"
+              inactiveColor="#fff"
+              activeTextColor="#fff"
+              inactiveTextColor="#212121"
+              activeBorderColor="#45AF31"
+              inactiveBorderColor="#E0E0E0"
+              className="mr-1"
+            />
+          ))}
+        </View>
+      </Container>
 
       <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
         {/* Use FieldCard for each stadium */}
         {mockStadiums.map((item) => (
-          <Container key={item.id} padding="md" className="mb-2">
+          <Container key={item.id} padding="sm">
             <View className="rounded-xl overflow-hidden shadow-lg bg-white">
               <FieldCard
                 name={item.name}

@@ -20,43 +20,26 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <View
-      style={[
-        {
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingTop: 32, // pt-8
-          paddingBottom: 8, // pb-2 (reduced from 16)
-          paddingHorizontal: 24, // px-6
-          backgroundColor: 'white',
-        },
-        style,
-      ]}
+      className="flex-row items-center px-4 pt-4 pb-2"
+      style={style}
     >
       {/* Left (e.g., back button) */}
-      <View style={{ minWidth: 40, alignItems: 'flex-start' }}>{left}</View>
+      <View className="flex-1 items-start">{left}</View>
       {/* Title or children */}
       {children ? (
-        <View style={{ flex: 1, alignItems: 'center' }}>{children}</View>
+        <View className="flex-1 items-center">{children}</View>
       ) : title ? (
-        <Text
-          style={[
-            {
-              fontSize: 22,
-              fontFamily: 'Artico-Bold',
-              color: '#212121',
-              textAlign: 'center',
-              flex: 1,
-            },
-            titleStyle,
-          ]}
-          numberOfLines={1}
-        >
-          {title}
-        </Text>
+        <View className="flex-1 items-center justify-center">
+          <Text
+            className="text-[28px] font-artico-bold text-text-primary text-center"
+            style={titleStyle}
+          >
+            {title}
+          </Text>
+        </View>
       ) : null}
       {/* Right (e.g., actions) */}
-      <View style={{ minWidth: 40, alignItems: 'flex-end' }}>{right}</View>
+      <View className="flex-1 items-end">{right}</View>
     </View>
   );
 }; 

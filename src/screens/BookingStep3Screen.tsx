@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
-import { Input } from '../components/common';
-import { BlurView } from 'expo-blur';
+import { Input, SuccessModal } from '../components/common';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 type BookingStep3ScreenNavigationProp = StackNavigationProp<
@@ -23,20 +22,55 @@ const mockBookingDetails = {
 export const BookingStep3Screen: React.FC<Props> = ({ navigation }) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const { width, height } = Dimensions.get('window');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleSubmit = () => {
-    navigation.navigate('Main');
+    // Show success modal
+    setShowSuccessModal(true);
+  };
+
+  const handleSuccessModalClose = () => {
+    setShowSuccessModal(false);
+    // Navigate to main screen after showing success
+    try {
+      navigation.navigate('Main');
+    } catch (error) {
+      console.error('Navigation error in BookingStep3:', error);
+      // Fallback - go back to previous screen
+      navigation.goBack();
+    }
   };
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <BlurView intensity={90} tint="light" style={{ position: 'absolute', width, height, top: 0, left: 0, zIndex: 1 }} />
-      <SafeAreaView className="flex-1 justify-center items-center" style={{ zIndex: 2 }}>
-        <View
-          className="bg-white rounded-2xl p-6 shadow-lg items-center relative"
-          style={{ width: 400, maxWidth: '90%' }}
-        >
+      {/* Transparent overlay */}
+      <View style={{ 
+        position: 'absolute', 
+        top: 0, 
+        left: 0, 
+        right: 0, 
+        bottom: 0, 
+        backgroundColor: 'rgba(0,0,0,0.5)' 
+      }} />
+      
+      {/* Touchable backdrop */}
+      <TouchableOpacity 
+        style={{ 
+          position: 'absolute', 
+          top: 0, 
+          left: 0, 
+          right: 0, 
+          bottom: 0 
+        }}
+        onPress={() => navigation.goBack()}
+        activeOpacity={1}
+      />
+      
+      {/* Modal content */}
+      <View
+        className="bg-white rounded-2xl p-6 shadow-lg items-center relative mx-4"
+        style={{ width: '100%', maxWidth: 400 }}
+      >
           {/* Close button */}
           <TouchableOpacity
             onPress={() => navigation.goBack()}
@@ -62,10 +96,10 @@ export const BookingStep3Screen: React.FC<Props> = ({ navigation }) => {
           />
           {/* Details */}
           <View className="w-full mb-6">
-            <Text className="font-manrope-bold text-[20px] mb-1">Дата и время</Text>
-            <Text className="text-[#758A80] font-manrope-light text-base mb-3">{mockBookingDetails.date}</Text>
-            <Text className="font-manrope-bold text-[20px] mb-1">Стоимость</Text>
-            <Text className="text-[#758A80] font-manrope-light text-base">{mockBookingDetails.price}</Text>
+            <Text className="font-manrope-bold text-[14px] text-[#758A80] mb-1">Дата и время</Text>
+            <Text className="text-[#758A80] font-manrope-light text-xs mb-3">{mockBookingDetails.date}</Text>
+            <Text className="font-manrope-bold text-[14px] text-[#758A80] mb-1">Стоимость</Text>
+            <Text className="text-[#758A80] font-manrope-light text-xs">{mockBookingDetails.price}</Text>
           </View>
           {/* Button */}
           <TouchableOpacity
@@ -75,7 +109,14 @@ export const BookingStep3Screen: React.FC<Props> = ({ navigation }) => {
             <Text className="text-white font-manrope-bold text-md">Отправить Заявку</Text>
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
+
+      {/* Success Modal */}
+      <SuccessModal
+        visible={showSuccessModal}
+        onClose={handleSuccessModalClose}
+        title="ЗАЯВКА ОТПРАВЛЕНА"
+        message="Ваша заявка на бронирование успешно отправлена. Мы свяжемся с вами в ближайшее время."
+      />
     </View>
   );
 }; 

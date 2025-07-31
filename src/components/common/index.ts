@@ -10,4 +10,6 @@ export { SectionHeader } from './SectionHeader';
 export { FieldCard } from './FieldCard';
 export { NewsCard } from './NewsCard';
 export { ClanCard } from './ClanCard';
-export { Header } from './Header'; 
+export { Header } from './Header';
+export { MatchCard } from './MatchCard';
+export { SuccessModal } from './SuccessModal'; 

@@ -31,7 +31,7 @@ export const Container: React.FC<ContainerProps> = ({
 
   return (
     <View 
-      className={`flex-1 ${getPaddingClasses()} ${className}`}
+      className={`${getPaddingClasses()} ${className}`}
       {...props}
     >
       {children}
