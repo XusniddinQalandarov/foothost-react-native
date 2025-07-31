@@ -10,7 +10,7 @@ config.transformer.minifierConfig = {
   },
 };
 
-// Configure SVG transformer
+// Configure SVG transformer properly
 config.transformer.babelTransformerPath = require.resolve('react-native-svg-transformer');
 
 // Remove SVG from asset extensions since we're using the transformer
