@@ -15,19 +15,29 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.company.foothost",
-      "newArchEnabled": true
+      "newArchEnabled": false
     },
     "android": {
       "package": "com.company.foothost",
       "backgroundColor": "#4CAF50",
-      "newArchEnabled": true
+      "newArchEnabled": false
     },
     "web": {
       "bundler": "metro"
     },
     "plugins": [
       "expo-font",
-      "expo-build-properties"
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "newArchEnabled": false
+          },
+          "ios": {
+            "newArchEnabled": false
+          }
+        }
+      ]
     ],
     "extra": {
       "eas": {

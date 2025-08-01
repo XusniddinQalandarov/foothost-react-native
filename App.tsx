@@ -14,9 +14,9 @@ export default function App() {
       await Font.loadAsync({
         // Artico Fonts
         'Artico-Black': require('./assets/fonts/Artico/artico-extracond-black.otf'),
-        'Artico-Bold': require('./assets/fonts/Artico/cretype - Artico ExtraCond Bold.otf'),
-        'Artico-Medium': require('./assets/fonts/Artico/cretype  Artico ExtraCond Medium.otf'),
-        'Artico-BlackItalic': require('./assets/fonts/Artico/Artico ExtraCond Black Italic.ttf'),
+        'Artico-Bold': require('./assets/fonts/Artico/artico-extracond-bold.otf'),
+        'Artico-Medium': require('./assets/fonts/Artico/artico-extracond-medium.otf'),
+        'Artico-BlackItalic': require('./assets/fonts/Artico/artico-extracond-black-italic.ttf'),
         
         // ManRope Fonts
         'ManRope-ExtraLight': require('./assets/fonts/ManRope/Manrope-ExtraLight.ttf'),
