@@ -1,10 +1,7 @@
+process.env.BABEL_DISABLE_CACHE = 1;
+
 module.exports = function (api) {
-  api.cache(true);
-  return {
-    presets: ['babel-preset-expo'],
-    plugins: ['nativewind/babel'],
-    generatorOpts: {
-      maxSize: 1000000, // Increase to 1MB (1000000 bytes)
-    },
-  };
-}; 
+  api.cache(false);  // Disable caching for troubleshooting
+  
+  return require('./babel.max.js');
+};
