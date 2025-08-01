@@ -39,12 +39,14 @@ export const AppNavigator: React.FC = () => {
           name="BookingStep3" 
           component={BookingStep3Screen} 
           options={{ 
-            presentation: 'modal', 
+            presentation: 'transparentModal', 
             headerShown: false,
-            gestureEnabled: true
+            gestureEnabled: true,
+            cardStyle: { backgroundColor: 'rgba(0, 0, 0, 0.5)' }
           }} 
         />
         <Stack.Screen name="MatchRating" component={MatchRatingScreen} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

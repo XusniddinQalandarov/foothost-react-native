@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
 import { Input, SuccessModal } from '../components/common';
@@ -42,18 +42,13 @@ export const BookingStep3Screen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {/* Transparent overlay */}
-      <View style={{ 
-        position: 'absolute', 
-        top: 0, 
-        left: 0, 
-        right: 0, 
-        bottom: 0, 
-        backgroundColor: 'rgba(0,0,0,0.5)' 
-      }} />
-      
-      {/* Touchable backdrop */}
+    <View style={{ 
+      flex: 1, 
+      backgroundColor: 'transparent', // Navigation handles backdrop now
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 16 
+    }}>
       <TouchableOpacity 
         style={{ 
           position: 'absolute', 
@@ -68,47 +63,51 @@ export const BookingStep3Screen: React.FC<Props> = ({ navigation }) => {
       
       {/* Modal content */}
       <View
-        className="bg-white rounded-2xl p-6 shadow-lg items-center relative mx-4"
-        style={{ width: '100%', maxWidth: 400 }}
+        className="bg-white rounded-2xl p-6 shadow-lg items-center relative"
+        style={{ width: '100%', maxWidth: 400, zIndex: 1 }}
       >
-          {/* Close button */}
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={{ position: 'absolute', top: 18, right: 18, zIndex: 10 }}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          >
-            <MaterialCommunityIcons name="close" size={32} color="#758A80" />
-          </TouchableOpacity>
-          {/* Title */}
-          <Text className="text-[28px] font-artico-bold text-text-primary mb-6 self-start">БРОНИРОВАНИЕ</Text>
-          {/* Inputs */}
-          <Input
-            placeholder="Имя"
-            value={name}
-            onChangeText={setName}
-            className="w-full mb-4"
-          />
-          <Input
-            placeholder="Телефон"
-            value={phone}
-            onChangeText={setPhone}
-            className="w-full mb-6"
-          />
-          {/* Details */}
-          <View className="w-full mb-6">
-            <Text className="font-manrope-bold text-[14px] text-[#758A80] mb-1">Дата и время</Text>
-            <Text className="text-[#758A80] font-manrope-light text-xs mb-3">{mockBookingDetails.date}</Text>
-            <Text className="font-manrope-bold text-[14px] text-[#758A80] mb-1">Стоимость</Text>
-            <Text className="text-[#758A80] font-manrope-light text-xs">{mockBookingDetails.price}</Text>
-          </View>
-          {/* Button */}
-          <TouchableOpacity
-            className="bg-primary rounded-lg items-center py-4 w-full mt-2"
-            onPress={handleSubmit}
-          >
-            <Text className="text-white font-manrope-bold text-md">Отправить Заявку</Text>
-          </TouchableOpacity>
+        {/* Close button */}
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ position: 'absolute', top: 18, right: 18, zIndex: 10 }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <MaterialCommunityIcons name="close" size={32} color="#758A80" />
+        </TouchableOpacity>
+        
+        {/* Title */}
+        <Text className="text-[28px] font-artico-bold text-text-primary mb-6 self-start">БРОНИРОВАНИЕ</Text>
+        
+        {/* Inputs */}
+        <Input
+          placeholder="Имя"
+          value={name}
+          onChangeText={setName}
+          className="w-full mb-4"
+        />
+        <Input
+          placeholder="Телефон"
+          value={phone}
+          onChangeText={setPhone}
+          className="w-full mb-6"
+        />
+        
+        {/* Details */}
+        <View className="w-full mb-6">
+          <Text className="font-manrope-bold text-[14px] text-[#758A80] mb-1">Дата и время</Text>
+          <Text className="text-[#758A80] font-manrope-light text-xs mb-3">{mockBookingDetails.date}</Text>
+          <Text className="font-manrope-bold text-[14px] text-[#758A80] mb-1">Стоимость</Text>
+          <Text className="text-[#758A80] font-manrope-light text-xs">{mockBookingDetails.price}</Text>
         </View>
+        
+        {/* Button */}
+        <TouchableOpacity
+          className="bg-primary rounded-lg items-center py-4 w-full mt-2"
+          onPress={handleSubmit}
+        >
+          <Text className="text-white font-manrope-bold text-md">Отправить Заявку</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Success Modal */}
       <SuccessModal

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Image, Alert, Modal, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
-import { Header, Container, MatchCard } from '../components/common';
+import { Header, Container, MatchCard, TeamCard, Button } from '../components/common';
 import LogoWhite from '../../assets/images/logo_white.svg';
 import CameraSvg from '../../assets/images/profile/camera.svg';
 import ChelseaSvg from '../../assets/images/profile/chelsea.svg';
@@ -108,9 +108,31 @@ const mockPastMatches = [
   }
 ];
 
+const mockTeams = [
+  {
+    id: '1',
+    name: 'CHELSEA',
+    logo: <ChelseaSvg width={48} height={48} />,
+    onPress: () => console.log('Chelsea team pressed')
+  },
+  {
+    id: '2',
+    name: 'ARSENAL',
+    logo: null,
+    onPress: () => console.log('Arsenal team pressed')
+  },
+  {
+    id: '3',
+    name: 'MAN UNITED',
+    logo: <MyuSvg width={48} height={48} />,
+    onPress: () => console.log('Man United team pressed')
+  }
+];
+
 export const ProfileScreen: React.FC<Props> = ({ navigation }) => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [activeTab, setActiveTab] = useState<'upcoming' | 'history'>('upcoming');
+  const [activeTab, setActiveTab] = useState<'upcoming' | 'history' | 'teams'>('upcoming');
+  const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
 
   const handlePersonalDetails = () => {
     setShowDropdown(false);
@@ -154,6 +176,10 @@ export const ProfileScreen: React.FC<Props> = ({ navigation }) => {
       date: match.dateTime,
       fieldName: match.stadiumName,
     });
+  };
+
+  const handleCreateTeam = () => {
+    setShowCreateTeamModal(true);
   };
 
   return (
@@ -219,7 +245,11 @@ export const ProfileScreen: React.FC<Props> = ({ navigation }) => {
         </View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 72 }}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false} 
+        style={{ marginTop: 72 }}
+        contentContainerStyle={activeTab === 'teams' ? { paddingBottom: 100 } : {}}
+      >
         <Container padding="sm">
           {/* Name and Soccer Ball */}
           <View className="items-center mt-2 mb-6">
@@ -243,12 +273,20 @@ export const ProfileScreen: React.FC<Props> = ({ navigation }) => {
               onPress={() => setActiveTab('history')}
             >
               <Text className={`text-center font-manrope-medium text-xs ${activeTab === 'history' ? 'text-primary' : 'text-[#150000]'}`}>
-                История матчей / турниров
+                История матчей
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              className={`flex-1 py-3 ${activeTab === 'teams' ? 'border-b-2 border-primary' : ''}`}
+              onPress={() => setActiveTab('teams')}
+            >
+              <Text className={`text-center font-manrope-medium text-xs ${activeTab === 'teams' ? 'text-primary' : 'text-[#150000]'}`}>
+                Мои команды
               </Text>
             </TouchableOpacity>
           </View>
 
-          {/* Match Cards */}
+          {/* Content based on active tab */}
           <View className="mb-4">
             {activeTab === 'upcoming' ? (
               mockUpcomingMatches.map((match) => (
@@ -286,7 +324,7 @@ export const ProfileScreen: React.FC<Props> = ({ navigation }) => {
                   </View>
                 </View>
               ))
-            ) : (
+            ) : activeTab === 'history' ? (
               mockPastMatches.map((match) => (
                 <View key={match.id} className="mb-4">
                   <View className="rounded-xl overflow-hidden shadow-lg bg-white">
@@ -323,10 +361,120 @@ export const ProfileScreen: React.FC<Props> = ({ navigation }) => {
                   </View>
                 </View>
               ))
+            ) : (
+              // Teams tab content
+              <View>
+                {mockTeams.map((team) => (
+                  <TeamCard
+                    key={team.id}
+                    name={team.name}
+                    logo={team.logo}
+                    onPress={team.onPress}
+                  />
+                ))}
+              </View>
             )}
           </View>
         </Container>
       </ScrollView>
+      
+      {/* Create Team Button - Fixed at bottom */}
+      {activeTab === 'teams' && (
+        <View className="absolute bottom-0 left-0 right-0 bg-white px-4 py-4">
+          <Button
+            title="Создать Команду"
+            onPress={handleCreateTeam}
+            variant="primary"
+            className="w-full"
+            textClassName="font-manrope-bold text-sm"
+          />
+        </View>
+      )}
+
+      {/* Create Team Modal */}
+      <Modal
+        visible={showCreateTeamModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowCreateTeamModal(false)}
+      >
+        <View className="flex-1" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
+          <TouchableOpacity 
+            className="flex-1" 
+            activeOpacity={1}
+            onPress={() => setShowCreateTeamModal(false)}
+          />
+          
+          <View className="bg-white rounded-t-3xl shadow-lg" style={{ height: '70%' }}>
+            {/* White Header with Rounded Top */}
+            <View className="bg-white rounded-t-3xl" style={{ height: 80 }}>
+              <View className="flex-1 justify-center items-center">
+                <Text className="text-lg font-manrope-bold text-text-primary">
+                  КОМАНДА
+                </Text>
+              </View>
+            </View>
+
+            <KeyboardAvoidingView 
+              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+              style={{ flex: 1 }}
+              keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+            >
+              <View className="flex-1 px-4 pt-6">
+                {/* Back Button */}
+                <View className="flex-row items-center mb-4">
+                  <TouchableOpacity 
+                    onPress={() => setShowCreateTeamModal(false)}
+                    className="p-2"
+                    activeOpacity={0.7}
+                  >
+                    <MaterialCommunityIcons name="arrow-left" size={24} color="#000" />
+                  </TouchableOpacity>
+                </View>
+
+                {/* Team Input Field */}
+                <View className="bg-gray-100 rounded-lg p-4 mb-6">
+                  <View className="flex-row items-center">
+                    <TouchableOpacity 
+                      className="w-16 h-16 bg-gray-300 rounded-full items-center justify-center mr-4"
+                      activeOpacity={0.7}
+                    >
+                      <CameraSvg width={24} height={24} />
+                    </TouchableOpacity>
+                    
+                    <View className="flex-1">
+                      <TextInput
+                        placeholder="Название команды"
+                        placeholderTextColor="#9CA3AF"
+                        className="text-base font-manrope-medium text-text-primary"
+                        autoFocus={true}
+                        returnKeyType="done"
+                      />
+                    </View>
+                  </View>
+                </View>
+
+                {/* Empty space for visual balance */}
+                <View className="flex-1" />
+
+                {/* Create Button */}
+                <View className="pb-6">
+                  <Button
+                    title="СОЗДАТЬ"
+                    onPress={() => {
+                      setShowCreateTeamModal(false);
+                      Alert.alert('Успешно', 'Команда создана!');
+                    }}
+                    variant="primary"
+                    className="w-full"
+                    textClassName="font-manrope-bold text-base"
+                  />
+                </View>
+              </View>
+            </KeyboardAvoidingView>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }; 
