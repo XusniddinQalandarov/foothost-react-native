@@ -5,7 +5,7 @@ import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../types/navigation';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Container } from '../components/common';
-import { SuccessModal } from '../components/common/SuccessModal';
+import { SuccessModal, TeamSelectionModal, TeamConfirmationModal } from '../components/common';
 // SVGs are assumed to be set up correctly
 import TypeOfPitchSvg from '../../assets/images/booking/typeofPitch.svg';
 import TypeOfFieldSvg from '../../assets/images/booking/typeofField.svg';
@@ -52,6 +52,31 @@ const mockTournament = {
   team2: 'MANCHESTER UNITED',
 };
 
+// Mock user teams data (same as in ProfileScreen)
+interface Team {
+  id: string;
+  name: string;
+  logo?: React.ReactNode;
+}
+
+const mockUserTeams: Team[] = [
+  {
+    id: '1',
+    name: 'CHELSEA',
+    logo: <ChelseaSvg width={48} height={48} />,
+  },
+  {
+    id: '2',
+    name: 'ARSENAL',
+    logo: null,
+  },
+  {
+    id: '3',
+    name: 'MAN UNITED',
+    logo: <MyuSvg width={48} height={48} />,
+  },
+];
+
 // Helper component for info cards
 const InfoCard = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string }) => (
   <View className="bg-gray-100 rounded-lg p-3 flex-1 flex-row items-center h-full">
@@ -65,7 +90,10 @@ const InfoCard = ({ icon, label, value }: { icon: React.ReactNode, label: string
 
 export const TournamentDetailsScreen: React.FC<Props> = ({ navigation, route }) => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showTeamSelectionModal, setShowTeamSelectionModal] = useState(false);
+  const [showTeamConfirmationModal, setShowTeamConfirmationModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   
   // Use route params if available, otherwise use mock data
   const tournament = route?.params?.tournament || mockTournament;
@@ -73,9 +101,30 @@ export const TournamentDetailsScreen: React.FC<Props> = ({ navigation, route }) 
   const handleJoinTournament = () => {
     if (isSubmitting) return;
     
-    setIsSubmitting(true);
+    // Show team selection modal first
+    setShowTeamSelectionModal(true);
+  };
+
+  const handleTeamSelect = (team: Team) => {
+    setSelectedTeam(team);
+    setShowTeamSelectionModal(false);
+    setShowTeamConfirmationModal(true);
+  };
+
+  const handleCloseTeamSelectionModal = () => {
+    setShowTeamSelectionModal(false);
+  };
+
+  const handleCloseTeamConfirmationModal = () => {
+    setShowTeamConfirmationModal(false);
+    setSelectedTeam(null);
+  };
+
+  const handleConfirmTeamSelection = () => {
+    setShowTeamConfirmationModal(false);
     
-    // Simulate API call
+    // Simulate API call for tournament participation
+    setIsSubmitting(true);
     setTimeout(() => {
       setShowSuccessModal(true);
       setIsSubmitting(false);
@@ -84,6 +133,7 @@ export const TournamentDetailsScreen: React.FC<Props> = ({ navigation, route }) 
 
   const handleCloseModal = () => {
     setShowSuccessModal(false);
+    setSelectedTeam(null);
     // Navigate back to tournaments list
     navigation.goBack();
   };
@@ -235,6 +285,24 @@ export const TournamentDetailsScreen: React.FC<Props> = ({ navigation, route }) 
           </Text>
         </TouchableOpacity>
       </View>
+
+      {/* Team Selection Modal */}
+      <TeamSelectionModal
+        visible={showTeamSelectionModal}
+        teams={mockUserTeams}
+        selectedTeamId={selectedTeam?.id}
+        onClose={handleCloseTeamSelectionModal}
+        onSelectTeam={handleTeamSelect}
+      />
+
+      {/* Team Confirmation Modal */}
+      <TeamConfirmationModal
+        visible={showTeamConfirmationModal}
+        selectedTeam={selectedTeam}
+        tournamentName={tournament.title}
+        onClose={handleCloseTeamConfirmationModal}
+        onConfirm={handleConfirmTeamSelection}
+      />
 
       {/* Success Modal */}
       <SuccessModal

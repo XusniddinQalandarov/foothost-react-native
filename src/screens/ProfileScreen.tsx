@@ -1,9 +1,20 @@
-import React, { useState } from 'react';
-import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Image, Alert, Modal, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import * as Clipboard from 'expo-clipboard';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
-import { Header, Container, MatchCard, TeamCard, Button } from '../components/common';
+import { 
+  Header, 
+  Container, 
+  MatchCard, 
+  TeamCard, 
+  Button,
+  CreateTeamModal,
+  TeamDetailsModal,
+  TeamOptionsModal,
+  InviteQRModal
+} from '../components/common';
 import LogoWhite from '../../assets/images/logo_white.svg';
 import CameraSvg from '../../assets/images/profile/camera.svg';
 import ChelseaSvg from '../../assets/images/profile/chelsea.svg';
@@ -19,13 +30,31 @@ interface Props {
 }
 
 interface Team {
+  id: string;
   name: string;
   logo?: any;
+  isUserTeam?: boolean;
+  isUserOwner?: boolean;
+}
+
+interface TeamMember {
+  id: string;
+  name: string;
+  avatar?: string;
 }
 
 const mockUser = {
   name: 'ШУКУР ГАЙНУТДИНОВ',
 };
+
+const mockTeamMembers: TeamMember[] = [
+  { id: '1', name: 'ALI' },
+  { id: '2', name: 'ALI' },
+  { id: '3', name: 'ALI' },
+  { id: '4', name: 'ALI' },
+  { id: '5', name: 'ALI' },
+  { id: '6', name: 'ALI' },
+];
 
 const mockUpcomingMatches = [
   {
@@ -108,24 +137,28 @@ const mockPastMatches = [
   }
 ];
 
-const mockTeams = [
+const initialTeams: Team[] = [
   {
     id: '1',
     name: 'CHELSEA',
     logo: <ChelseaSvg width={48} height={48} />,
-    onPress: () => console.log('Chelsea team pressed')
+    isUserOwner: false, // User is a member, not owner
   },
   {
     id: '2',
     name: 'ARSENAL',
     logo: null,
-    onPress: () => console.log('Arsenal team pressed')
+    isUserOwner: false, // User is a member, not owner
   },
+];
+
+const initialUserTeams: Team[] = [
   {
     id: '3',
     name: 'MAN UNITED',
     logo: <MyuSvg width={48} height={48} />,
-    onPress: () => console.log('Man United team pressed')
+    isUserTeam: true,
+    isUserOwner: true, // User owns this team
   }
 ];
 
@@ -133,18 +166,25 @@ export const ProfileScreen: React.FC<Props> = ({ navigation }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeTab, setActiveTab] = useState<'upcoming' | 'history' | 'teams'>('upcoming');
   const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
+  const [showTeamDetailsModal, setShowTeamDetailsModal] = useState(false);
+  const [showTeamOptionsModal, setShowTeamOptionsModal] = useState(false);
+  const [showInviteQRModal, setShowInviteQRModal] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const [teams, setTeams] = useState<Team[]>(initialTeams);
+  const [userTeams, setUserTeams] = useState<Team[]>(initialUserTeams);
+  const [newTeamName, setNewTeamName] = useState('');
 
-  const handlePersonalDetails = () => {
+  const handlePersonalDetails = useCallback(() => {
     setShowDropdown(false);
     navigation.navigate('PersonalData');
-  };
+  }, [navigation]);
 
-  const handleAboutUs = () => {
+  const handleAboutUs = useCallback(() => {
     setShowDropdown(false);
     navigation.navigate('AboutUs');
-  };
+  }, [navigation]);
 
-  const handleLogOut = () => {
+  const handleLogOut = useCallback(() => {
     setShowDropdown(false);
     Alert.alert(
       'Выйти из аккаунта',
@@ -161,14 +201,14 @@ export const ProfileScreen: React.FC<Props> = ({ navigation }) => {
         }
       ]
     );
-  };
+  }, [navigation]);
 
-  const handleViewMatch = (matchId: string) => {
+  const handleViewMatch = useCallback((matchId: string) => {
     console.log('View match:', matchId);
     // Navigate to match details or booking
-  };
+  }, []);
 
-  const handlePastMatchPress = (match: any) => {
+  const handlePastMatchPress = useCallback((match: any) => {
     navigation.navigate('MatchRating', {
       matchId: match.id,
       teams: [match.teams[0].name, match.teams[1].name],
@@ -176,11 +216,171 @@ export const ProfileScreen: React.FC<Props> = ({ navigation }) => {
       date: match.dateTime,
       fieldName: match.stadiumName,
     });
-  };
+  }, [navigation]);
 
-  const handleCreateTeam = () => {
+  const handleCreateTeam = useCallback(() => {
     setShowCreateTeamModal(true);
-  };
+  }, []);
+
+  const handleTeamPress = useCallback((team: Team) => {
+    setSelectedTeam(team);
+    setShowTeamDetailsModal(true);
+  }, []);
+
+  const handleTeamOptions = useCallback(() => {
+    setShowTeamOptionsModal(true);
+  }, []);
+
+  const handleInvite = useCallback(() => {
+    setShowInviteQRModal(true);
+  }, []);
+
+  const handleCopyLink = useCallback(async () => {
+    try {
+      const baseUrl = 'https://foothost.app/team/invite';
+      const teamId = selectedTeam?.id || Date.now().toString();
+      const teamName = selectedTeam?.name || '';
+      const inviteUrl = `${baseUrl}?team=${teamId}&name=${encodeURIComponent(teamName)}`;
+      
+      await Clipboard.setStringAsync(inviteUrl);
+      Alert.alert('Успешно', 'Ссылка скопирована в буфер обмена');
+    } catch (error) {
+      Alert.alert('Ошибка', 'Не удалось скопировать ссылку');
+    }
+  }, [selectedTeam]);
+
+  const handleRemoveMember = useCallback((memberId: string, memberName: string) => {
+    Alert.alert(
+      'Удалить участника',
+      `Вы уверены, что хотите удалить ${memberName} из команды?`,
+      [
+        { text: 'Отмена', style: 'cancel' },
+        { 
+          text: 'Удалить', 
+          style: 'destructive',
+          onPress: () => {
+            // Here you would typically update the team members list
+            Alert.alert('Успешно', `${memberName} удален из команды`);
+          }
+        }
+      ]
+    );
+  }, []);
+
+  const handleLeaveTeam = useCallback(() => {
+    if (selectedTeam) {
+      Alert.alert(
+        'Покинуть команду',
+        `Вы уверены, что хотите покинуть команду ${selectedTeam.name}?`,
+        [
+          { text: 'Отмена', style: 'cancel' },
+          { 
+            text: 'Покинуть', 
+            style: 'destructive',
+            onPress: () => {
+              // Remove team from user's teams list
+              if (selectedTeam.isUserOwner) {
+                setUserTeams(prevTeams => prevTeams.filter(team => team.id !== selectedTeam.id));
+              } else {
+                setTeams(prevTeams => prevTeams.filter(team => team.id !== selectedTeam.id));
+              }
+              setSelectedTeam(null);
+              setShowTeamDetailsModal(false);
+              Alert.alert('Успешно', 'Вы покинули команду');
+            }
+          }
+        ]
+      );
+    }
+  }, [selectedTeam]);
+
+  const handleChangeAvatar = useCallback(() => {
+    setShowTeamOptionsModal(false);
+    Alert.alert('Изменить аватарку', 'Функция изменения аватарки будет доступна в следующем обновлении');
+  }, []);
+
+  const handleDeleteTeam = useCallback(() => {
+    setShowTeamOptionsModal(false);
+    Alert.alert(
+      'Удалить команду',
+      'Вы уверены, что хотите удалить команду? Это действие нельзя отменить.',
+      [
+        { text: 'Отмена', style: 'cancel' },
+        { 
+          text: 'Удалить', 
+          style: 'destructive',
+          onPress: () => {
+            if (selectedTeam) {
+              setUserTeams(prevTeams => prevTeams.filter(team => team.id !== selectedTeam.id));
+              setSelectedTeam(null);
+              setShowTeamDetailsModal(false);
+            }
+            Alert.alert('Успешно', 'Команда удалена');
+          }
+        }
+      ]
+    );
+  }, [selectedTeam]);
+
+  const handleLeave = useCallback(() => {
+    setShowTeamOptionsModal(false);
+    Alert.alert(
+      'Покинуть команду',
+      'Вы уверены, что хотите покинуть команду?',
+      [
+        { text: 'Отмена', style: 'cancel' },
+        { 
+          text: 'Покинуть', 
+          style: 'destructive',
+          onPress: () => {
+            if (selectedTeam) {
+              setUserTeams(prevTeams => prevTeams.filter(team => team.id !== selectedTeam.id));
+              setSelectedTeam(null);
+              setShowTeamDetailsModal(false);
+            }
+            Alert.alert('Успешно', 'Вы покинули команду');
+          }
+        }
+      ]
+    );
+  }, [selectedTeam]);
+
+  const handleCancel = useCallback(() => {
+    setShowTeamOptionsModal(false);
+  }, []);
+
+  const handleCreateTeamSubmit = useCallback(() => {
+    if (newTeamName.trim()) {
+      const newTeam: Team = {
+        id: Date.now().toString(),
+        name: newTeamName.trim().toUpperCase(),
+        logo: null,
+        isUserTeam: true,
+        isUserOwner: true, // New teams are owned by the creator
+      };
+      
+      setUserTeams(prevTeams => [...prevTeams, newTeam]);
+      setNewTeamName('');
+      setShowCreateTeamModal(false);
+      Alert.alert('Успешно', 'Команда создана!');
+    } else {
+      Alert.alert('Ошибка', 'Пожалуйста, введите название команды');
+    }
+  }, [newTeamName]);
+
+  const handleCloseCreateTeamModal = useCallback(() => {
+    setShowCreateTeamModal(false);
+    setNewTeamName('');
+  }, []);
+
+  const handleCloseTeamDetailsModal = useCallback(() => {
+    setShowTeamDetailsModal(false);
+    setSelectedTeam(null);
+  }, []);
+
+  const handleCloseInviteQRModal = useCallback(() => {
+    setShowInviteQRModal(false);
+  }, []);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -364,14 +564,31 @@ export const ProfileScreen: React.FC<Props> = ({ navigation }) => {
             ) : (
               // Teams tab content
               <View>
-                {mockTeams.map((team) => (
+                {teams.map((team) => (
                   <TeamCard
                     key={team.id}
                     name={team.name}
                     logo={team.logo}
-                    onPress={team.onPress}
+                    onPress={() => handleTeamPress(team)}
                   />
                 ))}
+                
+                {/* User's Team Section */}
+                {userTeams.length > 0 && (
+                  <View className="mt-6">
+                    <Text className="text-lg font-manrope-bold text-text-primary mb-3">
+                      Ваша команда
+                    </Text>
+                    {userTeams.map((team) => (
+                      <TeamCard
+                        key={`user-${team.id}`}
+                        name={team.name}
+                        logo={team.logo}
+                        onPress={() => handleTeamPress(team)}
+                      />
+                    ))}
+                  </View>
+                )}
               </View>
             )}
           </View>
@@ -392,89 +609,45 @@ export const ProfileScreen: React.FC<Props> = ({ navigation }) => {
       )}
 
       {/* Create Team Modal */}
-      <Modal
+      <CreateTeamModal
         visible={showCreateTeamModal}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setShowCreateTeamModal(false)}
-      >
-        <View className="flex-1" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
-          <TouchableOpacity 
-            className="flex-1" 
-            activeOpacity={1}
-            onPress={() => setShowCreateTeamModal(false)}
-          />
-          
-          <View className="bg-white rounded-t-3xl shadow-lg" style={{ height: '70%' }}>
-            {/* White Header with Rounded Top */}
-            <View className="bg-white rounded-t-3xl" style={{ height: 80 }}>
-              <View className="flex-1 justify-center items-center">
-                <Text className="text-lg font-manrope-bold text-text-primary">
-                  КОМАНДА
-                </Text>
-              </View>
-            </View>
+        teamName={newTeamName}
+        onTeamNameChange={setNewTeamName}
+        onSubmit={handleCreateTeamSubmit}
+        onClose={handleCloseCreateTeamModal}
+      />
 
-            <KeyboardAvoidingView 
-              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-              style={{ flex: 1 }}
-              keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-            >
-              <View className="flex-1 px-4 pt-6">
-                {/* Back Button */}
-                <View className="flex-row items-center mb-4">
-                  <TouchableOpacity 
-                    onPress={() => setShowCreateTeamModal(false)}
-                    className="p-2"
-                    activeOpacity={0.7}
-                  >
-                    <MaterialCommunityIcons name="arrow-left" size={24} color="#000" />
-                  </TouchableOpacity>
-                </View>
+      {/* Team Details Modal */}
+      <TeamDetailsModal
+        visible={showTeamDetailsModal}
+        teamName={selectedTeam?.name || ''}
+        members={mockTeamMembers}
+        isUserOwner={selectedTeam?.isUserOwner || false}
+        onClose={handleCloseTeamDetailsModal}
+        onOptions={handleTeamOptions}
+        onInvite={handleInvite}
+        onRemoveMember={handleRemoveMember}
+        onLeave={handleLeaveTeam}
+      />
 
-                {/* Team Input Field */}
-                <View className="bg-gray-100 rounded-lg p-4 mb-6">
-                  <View className="flex-row items-center">
-                    <TouchableOpacity 
-                      className="w-16 h-16 bg-gray-300 rounded-full items-center justify-center mr-4"
-                      activeOpacity={0.7}
-                    >
-                      <CameraSvg width={24} height={24} />
-                    </TouchableOpacity>
-                    
-                    <View className="flex-1">
-                      <TextInput
-                        placeholder="Название команды"
-                        placeholderTextColor="#9CA3AF"
-                        className="text-base font-manrope-medium text-text-primary"
-                        autoFocus={true}
-                        returnKeyType="done"
-                      />
-                    </View>
-                  </View>
-                </View>
+      {/* Team Options Modal */}
+      <TeamOptionsModal
+        visible={showTeamOptionsModal}
+        teamName={selectedTeam?.name || ''}
+        onClose={() => setShowTeamOptionsModal(false)}
+        onChangeAvatar={handleChangeAvatar}
+        onDeleteTeam={handleDeleteTeam}
+        onLeave={handleLeave}
+        onCancel={handleCancel}
+      />
 
-                {/* Empty space for visual balance */}
-                <View className="flex-1" />
-
-                {/* Create Button */}
-                <View className="pb-6">
-                  <Button
-                    title="СОЗДАТЬ"
-                    onPress={() => {
-                      setShowCreateTeamModal(false);
-                      Alert.alert('Успешно', 'Команда создана!');
-                    }}
-                    variant="primary"
-                    className="w-full"
-                    textClassName="font-manrope-bold text-base"
-                  />
-                </View>
-              </View>
-            </KeyboardAvoidingView>
-          </View>
-        </View>
-      </Modal>
+      {/* Invite QR Modal */}
+      <InviteQRModal
+        visible={showInviteQRModal}
+        teamName={selectedTeam?.name || ''}
+        onClose={handleCloseInviteQRModal}
+        onCopyLink={handleCopyLink}
+      />
     </SafeAreaView>
   );
 }; 

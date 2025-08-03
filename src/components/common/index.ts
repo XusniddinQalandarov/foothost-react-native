@@ -14,4 +14,13 @@ export { TeamCard } from './TeamCard';
 export { Header } from './Header';
 export { MatchCard } from './MatchCard';
 export { SuccessModal } from './SuccessModal';
-export { BlurBackdrop } from './BlurBackdrop'; 
+export { BlurBackdrop } from './BlurBackdrop';
+
+// Modal Components
+export { ModalHeader } from './ModalHeader';
+export { CreateTeamModal } from './CreateTeamModal';
+export { TeamDetailsModal } from './TeamDetailsModal';
+export { TeamOptionsModal } from './TeamOptionsModal';
+export { InviteQRModal } from './InviteQRModal';
+export { TeamSelectionModal } from './TeamSelectionModal';
+export { TeamConfirmationModal } from './TeamConfirmationModal'; 
