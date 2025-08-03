@@ -6,7 +6,7 @@ import { RootStackParamList } from '../types/navigation';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Container } from '../components/common';
 import { SuccessModal, TeamSelectionModal, TeamConfirmationModal } from '../components/common';
-// SVGs are assumed to be set up correctly
+// SVG imports
 import TypeOfPitchSvg from '../../assets/images/booking/typeofPitch.svg';
 import TypeOfFieldSvg from '../../assets/images/booking/typeofField.svg';
 import LengthOfFieldSvg from '../../assets/images/booking/lengthofField.svg';
@@ -78,12 +78,12 @@ const mockUserTeams: Team[] = [
 ];
 
 // Helper component for info cards
-const InfoCard = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string }) => (
+const InfoCard: React.FC<{ icon: React.ReactNode, label: string, value: string }> = ({ icon, label, value }) => (
   <View className="bg-gray-100 rounded-lg p-3 flex-1 flex-row items-center h-full">
     {icon}
     <View className="ml-2">
       <Text className="font-manrope-bold text-xs">{label}</Text>
-      <Text className="font-manrope-medium text-[10px] mt-1">{value}</Text>
+      <Text className="text-[#758A80] font-manrope-medium text-[10px] mt-1">{value}</Text>
     </View>
   </View>
 );

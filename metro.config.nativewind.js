@@ -1,24 +1,36 @@
 const { getDefaultConfig } = require('expo/metro-config');
-const { withNativeWind } = require('nativewind/metro');
 
 const config = getDefaultConfig(__dirname);
 
-// Asset handling configuration
-config.resolver.assetExts = [
-  ...config.resolver.assetExts.filter(ext => ext !== 'svg'),
-  'png', 'jpg', 'jpeg', 'gif', 'webp', 'otf', 'ttf',
-];
+// SVG support
+config.transformer.babelTransformerPath = require.resolve('react-native-svg-transformer');
+config.resolver.assetExts = config.resolver.assetExts.filter((ext) => ext !== 'svg');
+config.resolver.sourceExts = [...config.resolver.sourceExts, 'svg'];
 
-// Source extensions
-config.resolver.sourceExts = [
-  ...config.resolver.sourceExts,
-  'svg'
-];
+// Enhanced TurboModule and native module support
+config.resolver.platforms = ['ios', 'android', 'web', 'native'];
+config.resolver.resolverMainFields = ['react-native', 'browser', 'main'];
 
-// SVG transformer
-config.transformer = {
-  ...config.transformer,
-  babelTransformerPath: require.resolve('react-native-svg-transformer'),
+// Fix for TurboModuleRegistry issues
+config.resolver.alias = {
+  ...config.resolver.alias,
 };
 
-module.exports = withNativeWind(config, { input: './global.css' });
+// Enhanced transformer configuration
+config.transformer.minifierConfig = {
+  keep_fnames: true,
+  mangle: {
+    keep_fnames: true,
+  },
+};
+
+// Better source map support
+config.transformer.enableBabelRCLookup = false;
+
+// Additional resolver configuration for better native module support
+config.resolver.nodeModulesPaths = [
+  ...config.resolver.nodeModulesPaths,
+  require('path').resolve(__dirname, 'node_modules'),
+];
+
+module.exports = config;

@@ -15,12 +15,14 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.company.foothost",
-      "newArchEnabled": false
+      "newArchEnabled": false,
+      "enableHermes": true
     },
     "android": {
       "package": "com.company.foothost",
       "backgroundColor": "#4CAF50",
-      "newArchEnabled": false
+      "newArchEnabled": false,
+      "enableHermes": true
     },
     "web": {
       "bundler": "metro"
@@ -31,10 +33,12 @@
         "expo-build-properties",
         {
           "android": {
-            "newArchEnabled": false
+            "newArchEnabled": false,
+            "enableHermes": true
           },
           "ios": {
-            "newArchEnabled": false
+            "newArchEnabled": false,
+            "enableHermes": true
           }
         }
       ]
@@ -43,6 +47,7 @@
       "eas": {
         "projectId": "6a91c883-97d6-4510-a8dd-d38d85adbddb"
       }
-    }
+    },
+    "newArchEnabled": false
   }
 }
