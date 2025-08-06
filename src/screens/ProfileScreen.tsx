@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import * as Clipboard from 'expo-clipboard';
+
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
 import { 
@@ -242,10 +242,12 @@ export const ProfileScreen: React.FC<Props> = ({ navigation }) => {
       const teamName = selectedTeam?.name || '';
       const inviteUrl = `${baseUrl}?team=${teamId}&name=${encodeURIComponent(teamName)}`;
       
-      await Clipboard.setStringAsync(inviteUrl);
-      Alert.alert('Успешно', 'Ссылка скопирована в буфер обмена');
+      // Show the link in an alert since we removed clipboard functionality
+      Alert.alert('Ссылка приглашения', inviteUrl, [
+        { text: 'Закрыть', style: 'cancel' }
+      ]);
     } catch (error) {
-      Alert.alert('Ошибка', 'Не удалось скопировать ссылку');
+      Alert.alert('Ошибка', 'Не удалось создать ссылку');
     }
   }, [selectedTeam]);
 
