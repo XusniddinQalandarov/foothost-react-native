@@ -82,11 +82,15 @@ const mockDates = [
 
 // Helper component for info cards
 const InfoCard = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string }) => (
-  <View className="bg-gray-100 rounded-lg p-3 flex-1 flex-row items-center h-full">
-    {icon}
-    <View className="ml-2">
-      <Text className="font-manrope-bold text-xs">{label}</Text>
-      <Text className="font-manrope-medium text-[10px] mt-1">{value}</Text>
+  <View className="bg-gray-100 rounded-lg p-3 flex-1" style={{ minHeight: 80 }}>
+    <View className="flex-row">
+      <View className="mr-3 justify-center items-center" style={{ width: 42, height: 56 }}>
+        {icon}
+      </View>
+      <View className="flex-1 justify-center">
+        <Text className="font-manrope-bold text-xs" numberOfLines={2}>{label}</Text>
+        <Text className="font-manrope-medium text-[10px] mt-1" numberOfLines={2}>{value}</Text>
+      </View>
     </View>
   </View>
 );
@@ -172,8 +176,8 @@ export const BookingStep1Screen: React.FC<Props> = ({ navigation }) => {
                 <View className="flex-row items-center">
                   <Text className="text-text-primary font-artico-medium text-[30px]">{mockStadium.name}</Text>
                   <View className="bg-primary rounded-md px-2 py-1 ml-2 flex-row items-center">
-                    <Text className="text-white font-bold text-sm mr-1">{mockStadium.rating}</Text>
-                    <MaterialCommunityIcons name="star" size={14} color="white" />
+                    <Text className="text-white font-manrope-bold text-sm mr-1">{mockStadium.rating}</Text>
+                    <MaterialCommunityIcons name="star" size={16} color="white" />
                   </View>
                 </View>
                 <View className="flex-row items-center mt-1">
@@ -190,14 +194,14 @@ export const BookingStep1Screen: React.FC<Props> = ({ navigation }) => {
           {/* 1. Field Specifications (2x2 Grid) */}
           <View className="mb-6">
             <View className="flex-row justify-center align-center mb-2">
-              <InfoCard icon={<TypeOfPitchSvg width={36} height={36} />} label="Покрытие" value={mockStadium.cover} />
+              <InfoCard icon={<TypeOfPitchSvg width={42} height={42} />} label="Покрытие" value={mockStadium.cover} />
               <View className="w-2" />
-              <InfoCard icon={<TypeOfFieldSvg width={36} height={36} />} label="Тип площадки" value={mockStadium.type} />
+              <InfoCard icon={<TypeOfFieldSvg width={42} height={42} />} label="Тип площадки" value={mockStadium.type} />
             </View>
             <View className="flex-row justify-between">
-              <InfoCard icon={<LengthOfFieldSvg width={36} height={36} />} label="Длина х Ширина (м)" value={mockStadium.size} />
+              <InfoCard icon={<LengthOfFieldSvg width={42} height={42} />} label="Длина х Ширина (м)" value={mockStadium.size} />
               <View className="w-2" />
-              <InfoCard icon={<TimeOfWorkSvg width={36} height={36} />} label="Время работы" value={mockStadium.workTime} />
+              <InfoCard icon={<TimeOfWorkSvg width={42} height={42} />} label="Время работы" value={mockStadium.workTime} />
             </View>
           </View>
           {/* Schedule Section */}

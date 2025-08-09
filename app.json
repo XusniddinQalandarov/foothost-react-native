@@ -3,42 +3,6 @@
     "name": "FootHost",
     "slug": "football-app",
     "version": "1.0.0",
-    "orientation": "portrait",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "backgroundColor": "#4CAF50",
-      "resizeMode": "contain"
-    },
-    "assetBundlePatterns": [
-      "assets/**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.company.foothost",
-      "enableHermes": true
-    },
-    "android": {
-      "package": "com.company.foothost",
-      "backgroundColor": "#4CAF50",
-      "enableHermes": true
-    },
-    "web": {
-      "bundler": "metro"
-    },
-    "plugins": [
-      "expo-font",
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "enableHermes": true
-          },
-          "ios": {
-            "enableHermes": true
-          }
-        }
-      ]
-    ],
     "extra": {
       "eas": {
         "projectId": "6a91c883-97d6-4510-a8dd-d38d85adbddb"

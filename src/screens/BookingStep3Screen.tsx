@@ -49,18 +49,6 @@ export const BookingStep3Screen: React.FC<Props> = ({ navigation }) => {
       alignItems: 'center',
       paddingHorizontal: 16 
     }}>
-      <TouchableOpacity 
-        style={{ 
-          position: 'absolute', 
-          top: 0, 
-          left: 0, 
-          right: 0, 
-          bottom: 0 
-        }}
-        onPress={() => navigation.goBack()}
-        activeOpacity={1}
-      />
-      
       {/* Modal content */}
       <View
         className="bg-white rounded-2xl p-6 shadow-lg items-center relative"

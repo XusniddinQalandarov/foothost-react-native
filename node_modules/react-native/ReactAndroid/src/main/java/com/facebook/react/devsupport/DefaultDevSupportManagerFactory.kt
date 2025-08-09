@@ -9,6 +9,7 @@ package com.facebook.react.devsupport
 
 import android.content.Context
 import com.facebook.react.common.SurfaceDelegateFactory
+import com.facebook.react.common.build.ReactBuildConfig
 import com.facebook.react.devsupport.interfaces.DevBundleDownloadListener
 import com.facebook.react.devsupport.interfaces.DevLoadingViewManager
 import com.facebook.react.devsupport.interfaces.DevSupportManager
@@ -22,9 +23,9 @@ import com.facebook.react.packagerconnection.RequestHandler
  * dependencies in release builds. If the class isn't found, [PerftestDevSupportManager] is returned
  * instead.
  */
-public class DefaultDevSupportManagerFactory : DevSupportManagerFactory {
+internal class DefaultDevSupportManagerFactory : DevSupportManagerFactory {
 
-  public override fun create(
+  override fun create(
       applicationContext: Context,
       reactInstanceManagerHelper: ReactInstanceDevHelper,
       packagerPathForJSBundleName: String?,
@@ -101,7 +102,11 @@ public class DefaultDevSupportManagerFactory : DevSupportManagerFactory {
       useDevSupport: Boolean
   ): DevSupportManager =
       if (!useDevSupport) {
-        ReleaseDevSupportManager()
+        if (ReactBuildConfig.UNSTABLE_ENABLE_FUSEBOX_RELEASE) {
+          PerftestDevSupportManager(applicationContext)
+        } else {
+          ReleaseDevSupportManager()
+        }
       } else {
         BridgelessDevSupportManager(
             applicationContext,

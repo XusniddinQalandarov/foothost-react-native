@@ -7,14 +7,17 @@
 
 #pragma once
 
+#include "PerformanceEntryCircularBuffer.h"
+#include "PerformanceEntryKeyedBuffer.h"
+#include "PerformanceObserverRegistry.h"
+
+#include <jsinspector-modern/tracing/CdpTracing.h>
 #include <react/timing/primitives.h>
+
 #include <memory>
 #include <optional>
 #include <shared_mutex>
 #include <vector>
-#include "PerformanceEntryCircularBuffer.h"
-#include "PerformanceEntryKeyedBuffer.h"
-#include "PerformanceObserverRegistry.h"
 
 namespace facebook::react {
 
@@ -79,12 +82,14 @@ class PerformanceEntryReporter {
       const std::optional<DOMHighResTimeStamp>& startTime = std::nullopt);
 
   PerformanceEntry reportMeasure(
-      const std::string_view& name,
+      const std::string& name,
       double startTime,
       double endTime,
       const std::optional<double>& duration = std::nullopt,
       const std::optional<std::string>& startMark = std::nullopt,
-      const std::optional<std::string>& endMark = std::nullopt);
+      const std::optional<std::string>& endMark = std::nullopt,
+      const std::optional<jsinspector_modern::DevToolsTrackEntryPayload>&
+          trackMetadata = std::nullopt);
 
   void reportEvent(
       std::string name,
@@ -143,6 +148,9 @@ class PerformanceEntryReporter {
     }
     throw std::logic_error("Unhandled PerformanceEntryType");
   }
+
+  void traceMark(const PerformanceEntry& entry) const;
+  void traceMeasure(const PerformanceEntry& entry) const;
 };
 
 } // namespace facebook::react

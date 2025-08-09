@@ -52,7 +52,9 @@ Pod::Spec.new do |s|
   end
 
   s.dependency "React-featureflags"
+  add_dependency(s, "React-jsinspectortracing", :framework_name => 'jsinspector_moderntracing')
   s.dependency "React-timing"
   s.dependency "React-cxxreact"
+  s.dependency "React-perflogger"
   s.dependency "RCT-Folly", folly_version
 end

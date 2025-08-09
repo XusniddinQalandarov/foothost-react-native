@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
   SafeAreaView,
   TouchableOpacity,
   Alert,
+  TextInput,
 } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
@@ -31,6 +32,7 @@ export const PhoneVerificationScreen: React.FC<Props> = ({ navigation, route }) 
   const [code, setCode] = useState(['', '', '', '']);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [resendTime, setResendTime] = useState(39);
+  const inputRefs = useRef<(TextInput | null)[]>([]);
 
   const phoneNumber = route.params?.phoneNumber || '+7 702 517 11 98';
 
@@ -45,6 +47,14 @@ export const PhoneVerificationScreen: React.FC<Props> = ({ navigation, route }) 
     }, 1000);
 
     return () => clearInterval(interval);
+  }, []);
+
+  // Auto-focus first input when screen loads
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      inputRefs.current[0]?.focus();
+    }, 500);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleSubmit = (verificationCode: string) => {
@@ -63,9 +73,52 @@ export const PhoneVerificationScreen: React.FC<Props> = ({ navigation, route }) 
     }
   };
 
+  const handleCodeChange = (value: string, index: number) => {
+    const newCode = [...code];
+    
+    // Handle backspace
+    if (value === '' && index > 0) {
+      newCode[index] = '';
+      setCode(newCode);
+      setCurrentIndex(index - 1);
+      inputRefs.current[index - 1]?.focus();
+      return;
+    }
+    
+    // Handle input
+    if (value.length === 1 && /^\d$/.test(value)) {
+      newCode[index] = value;
+      setCode(newCode);
+      
+      // Move to next input or submit if complete
+      if (index < 3) {
+        setCurrentIndex(index + 1);
+        inputRefs.current[index + 1]?.focus();
+      } else {
+        // Code complete, submit
+        const completeCode = newCode.join('');
+        handleSubmit(completeCode);
+      }
+    }
+  };
+
+  const handleKeyPress = (key: string, index: number) => {
+    if (key === 'Backspace' && code[index] === '' && index > 0) {
+      const newCode = [...code];
+      newCode[index - 1] = '';
+      setCode(newCode);
+      setCurrentIndex(index - 1);
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
   const handleResend = () => {
     if (resendTime === 0) {
       setResendTime(39);
+      // Reset code and focus first input
+      setCode(['', '', '', '']);
+      setCurrentIndex(0);
+      inputRefs.current[0]?.focus();
       // In real app, you'd resend the SMS here
     }
   };
@@ -109,9 +162,25 @@ export const PhoneVerificationScreen: React.FC<Props> = ({ navigation, route }) 
                 index === currentIndex ? 'border-primary bg-primary/10' : 'border-gray-300'
               }`}
             >
-              <Text className="text-2xl font-bold text-text-primary">
-                {digit}
-              </Text>
+              <TextInput
+                ref={(ref) => (inputRefs.current[index] = ref)}
+                value={digit}
+                onChangeText={(value) => handleCodeChange(value, index)}
+                onKeyPress={({ nativeEvent }) => handleKeyPress(nativeEvent.key, index)}
+                onFocus={() => setCurrentIndex(index)}
+                keyboardType="numeric"
+                maxLength={1}
+                selectTextOnFocus
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  textAlign: 'center',
+                  fontSize: 24,
+                  fontWeight: 'bold',
+                  color: '#212121',
+                }}
+                className="text-2xl font-bold text-text-primary"
+              />
             </View>
           ))}
         </View>

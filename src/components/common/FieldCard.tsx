@@ -26,11 +26,9 @@ export const FieldCard: React.FC<FieldCardProps> = ({
   roundedBottom = false,
 }) => {
   const renderRating = () => (
-    <View className="bg-primary rounded-md py-1 px-1">
-      <View className="flex-row items-center">
-        <Text className="text-white font-manrope-medium text-sm mr-1">{rating}</Text>
-        <MaterialCommunityIcons name="star" size={16} color="white" />
-      </View>
+    <View className="bg-primary rounded-md px-2 py-1 flex-row items-center">
+      <Text className="text-white font-manrope-bold text-sm mr-1">{rating}</Text>
+      <MaterialCommunityIcons name="star" size={16} color="white" />
     </View>
   );
 

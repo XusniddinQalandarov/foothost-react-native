@@ -42,7 +42,20 @@ export const AppNavigator: React.FC = () => {
         
         {/* Booking Flow */}
         <Stack.Screen name="BookingStep1" component={BookingStep1Screen} />
-        <Stack.Screen name="BookingStep3" component={BookingStep3Screen} />
+        <Stack.Screen 
+          name="BookingStep3" 
+          component={BookingStep3Screen}
+          options={{
+            presentation: 'transparentModal',
+            cardStyle: { backgroundColor: 'rgba(0, 0, 0, 0.7)' },
+            cardOverlayEnabled: true,
+            cardStyleInterpolator: ({ current: { progress } }) => ({
+              cardStyle: {
+                opacity: progress,
+              },
+            }),
+          }}
+        />
         
         {/* Tournament Flow */}
         <Stack.Screen name="TournamentDetails" component={TournamentDetailsScreen} />
